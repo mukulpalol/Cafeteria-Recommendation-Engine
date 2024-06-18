@@ -19,4 +19,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CafeteriaRecommendationSystem.Common\CafeteriaRecommendationSystem.Common.csproj" />
+  </ItemGroup>
+
 </Project>

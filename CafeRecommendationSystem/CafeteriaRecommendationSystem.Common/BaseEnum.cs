@@ -7,14 +7,14 @@
         Employee = 3
     }
 
-    public enum MenuItemType
+    public enum MenuItemTypeEnum
     {
         Breakfast = 1,
         Lunch = 2,
         Dinner = 3
     }
 
-    public enum AvailabilityStatus
+    public enum AvailabilityStatusEnum
     {
         Available = 1,
         Unavailable = 2,
