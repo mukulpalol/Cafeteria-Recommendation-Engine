@@ -21,7 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CafeteriaRecommendationSystem.DAL\CafeteriaRecommendationSystem.DAL.csproj" />
+    <ProjectReference Include="..\CafeteriaRecommendationSystem.Common\CafeteriaRecommendationSystem.Common.csproj" />
+    <ProjectReference Include="..\CafeteriaRecommendationSystem.Service\CafeteriaRecommendationSystem.Service.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 
 namespace CafeteriaRecommendationSystem.Service.ServicesContract
 {
-    internal interface IAuthService
+    public interface IAuthService
     {
         User Login(string email, string password);
     }

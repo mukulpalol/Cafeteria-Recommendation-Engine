@@ -14,9 +14,9 @@ namespace CafeteriaRecommendationSystem.Service.Services
             _menuItemRepository = menuItemRepository;
         }
 
-        public void AddMenuItem(User user,MenuItem menuItem)
+        public void AddMenuItem(MenuItem menuItem)
         {
-            EnsureRole(user, RoleEnum.Admin);
+            //EnsureRole(user, RoleEnum.Admin);
             _menuItemRepository.Add(menuItem);
         }
 

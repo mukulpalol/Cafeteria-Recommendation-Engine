@@ -14,10 +14,8 @@ namespace CafeteriaRecommendationSystem.Service.Services
             _feedbackRepository = feedbackRepository;
         }
 
-        public void SubmitFeedback(User user, Feedback feedback)
-        {
-            EnsureRole(user, RoleEnum.Employee);
-            feedback.UserId = user.Id;
+        public void SubmitFeedback(Feedback feedback)
+        {                       
             _feedbackRepository.Add(feedback);
         }
 

@@ -4,7 +4,7 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
 {
     public interface IMenuItemService : IBaseService
     {
-        void AddMenuItem(User user, MenuItem menuItem);
+        void AddMenuItem(MenuItem menuItem);
         void UpdateMenuItem(User user, MenuItem menuItem);
         void UpdateMenuItemAvailability(User user, MenuItem menuItem, int AvailabilityStatusId);
         void DeleteMenuItem(User user, int menuItemId);
