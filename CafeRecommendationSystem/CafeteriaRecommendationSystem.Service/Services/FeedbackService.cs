@@ -1,5 +1,4 @@
-﻿using CafeteriaRecommendationSystem.Common;
-using CafeteriaRecommendationSystem.DAL.Models;
+﻿using CafeteriaRecommendationSystem.DAL.Models;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
 
@@ -15,7 +14,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
         }
 
         public void SubmitFeedback(Feedback feedback)
-        {                       
+        {
             _feedbackRepository.Add(feedback);
         }
 
