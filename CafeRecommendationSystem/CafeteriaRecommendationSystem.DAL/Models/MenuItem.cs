@@ -5,6 +5,8 @@
         public int Id { get; set; }
         public string Name { get; set; } = null!;
         public decimal Price { get; set; }
+        public decimal SentimentScore { get; set; }
+        public string? GeneralSentiment { get; set; }
         public int TypeId { get; set; }
         public virtual MenuItemType Type { get; set; } = null!;
         public int AvailabilityStatusId { get; set; }

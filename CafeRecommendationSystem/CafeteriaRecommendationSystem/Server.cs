@@ -1,190 +1,166 @@
 ﻿using CafeteriaRecommendationSystem.Common;
+using CafeteriaRecommendationSystem.Common.DTO;
+using CafeteriaRecommendationSystem.DAL;
 using CafeteriaRecommendationSystem.DAL.Models;
+using CafeteriaRecommendationSystem.DAL.Repositories;
+using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
+using CafeteriaRecommendationSystem.Service.Services;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
 namespace CafeteriaRecommendationSystem
 {
-    public class Server
+    public class Program
     {
-        private readonly TcpListener _listener;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly Dictionary<int, User> _sessions;
+        private static TcpListener _listener;
+        private static IServiceProvider _serviceProvider;
 
-        public Server(IServiceProvider serviceProvider)
+        public static async Task Main(string[] args)
         {
-            _listener = new TcpListener(IPAddress.Any, 5000);
-            _serviceProvider = serviceProvider;
-            _sessions = new Dictionary<int, User>();
+            ConfigureServices();
+            StartServer();
         }
 
-        public async Task StartAsync()
+        private static void ConfigureServices()
         {
+            _serviceProvider = new ServiceCollection()
+                .AddDbContext<CafeDbContext>()
+                .AddScoped<IUserRepository, UserRepository>()
+                .AddScoped<IFeedbackRepository, FeedbackRepository>()
+                .AddScoped<IMenuItemRepository, MenuItemRepository>()
+                .AddScoped<INotificationRepository, NotificationRepository>()
+                .AddScoped<IRecommendationRepository, RecommendationRepository>()
+                .AddScoped<ISelectionRepository, SelectionRepository>()
+                .AddScoped<IAuthService, AuthService>()
+                .AddScoped<IBaseService, BaseService>()
+                .AddScoped<IFeedbackService, FeedbackService>()
+                .AddScoped<IMenuItemService, MenuItemService>()
+                .AddScoped<INotificationService, NotificationService>()
+                .AddScoped<IRecommendationService, RecommendationService>()
+                .AddScoped<ISelectionService, SelectionService>()
+                .AddScoped<IUserService, UserService>()
+                .BuildServiceProvider();
+        }
+
+        private static void StartServer()
+        {
+            _listener = new TcpListener(IPAddress.Any, 8888);
             _listener.Start();
             Console.WriteLine("Server started...");
 
             while (true)
             {
-                var client = await _listener.AcceptTcpClientAsync();
-                Console.WriteLine("Client connected...");
-                _ = HandleClientAsync(client);
+                TcpClient client = _listener.AcceptTcpClient();
+                Thread clientThread = new Thread(() => HandleClient(client));
+                clientThread.Start();
             }
         }
 
-        private async Task HandleClientAsync(TcpClient client)
+        private static void HandleClient(TcpClient client)
         {
-            var buffer = new byte[1024];
-            var stream = client.GetStream();
+            NetworkStream stream = client.GetStream();
+            byte[] buffer = new byte[1024];
+            int bytesRead;
 
-            while (client.Connected)
+            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) != 0)
             {
-                try
-                {
-                    var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                    if (bytesRead == 0)
-                    {
-                        break;
-                    }
-                    var message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                    Console.WriteLine("Received: " + message);
-                    
-                    var responseMessage = ProcessRequest(message);
-
-                    var response = Encoding.ASCII.GetBytes(responseMessage);
-                    await stream.WriteAsync(response, 0, response.Length);
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine("Connection error: " + ex.Message);
-                    break;
-                }
+                string request = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                string response = RequestProcessor.ProcessRequest(request, _serviceProvider);
+                byte[] responseBytes = Encoding.ASCII.GetBytes(response);
+                stream.Write(responseBytes, 0, responseBytes.Length);
             }
+
             client.Close();
         }
+    }
 
-        private string ProcessRequest(string message)
+    public static class RequestProcessor
+    {
+        public static string ProcessRequest(string request, IServiceProvider serviceProvider)
         {
-            var parts = message.Split('|');
-            var command = parts[0];
+            string[] parts = request.Split('|');
+            string command = parts[0];
 
-            switch (command)
+            if (command == "login")
             {
-                case "LOGIN":
-                    var email = parts[1];
-                    var password = parts[2];
-                    var authService = _serviceProvider.GetService<IAuthService>();
-                    var user = authService.Login(email, password);
-                    if (user != null)
-                    {
-                        _sessions[user.Id] = user;
-                        return $"SUCCESS|{user.Id}|{user.Role}";
-                    }
-                    return "FAILURE|Invalid credentials";
+                return HandleLogin(parts, serviceProvider);
+            }
+            else if (command == "option")
+            {
+                return HandleOption(parts, serviceProvider);
+            }
+            return "Invalid command";
+        }
 
-                case "PERFORM_ACTION":
-                    var userId = int.Parse(parts[1]);
-                    if (_sessions.ContainsKey(userId))
-                    {
-                        var role = _sessions[userId].Role;
-                        return HandleAction(role.Id, parts.Skip(2).ToArray());
-                    }
-                    return "FAILURE|Session not found";
+        private static string HandleLogin(string[] parts, IServiceProvider serviceProvider)
+        {
+            string email = parts[1];
+            string password = parts[2];
 
-                default:
-                    return "FAILURE|Unknown command";
+            var authService = serviceProvider.GetService<IAuthService>();
+            var user = authService.Login(email, password);
+            if (user != null)
+            {
+                return $"Login successful|{user.RoleId}|{user.Id}";
+            }
+            else
+            {
+                return "Login failed";
             }
         }
 
-        private string HandleAction(int roleId, string[] parameters)
+        private static string HandleOption(string[] parts, IServiceProvider serviceProvider)
         {
-            var action = parameters[0];
-            switch (roleId)
+            int role = int.Parse(parts[1]);
+            string option = parts[2];
+
+            if (role == (int)RoleEnum.Admin && option == "1")
             {
-                case (int)RoleEnum.Admin:
-                    return HandleAdminAction(action, parameters.Skip(1).ToArray());
-
-                case (int)RoleEnum.Chef:
-                    return HandleChefAction(action, parameters.Skip(1).ToArray());
-
-                case (int)RoleEnum.Employee:
-                    return HandleEmployeeAction(action, parameters.Skip(1).ToArray());
-
-                default:
-                    return "FAILURE|Unknown role";
+                var menuItemService = serviceProvider.GetService<IMenuItemService>();
+                string menuItemJson = parts[3];
+                MenuItem menuItem = JsonConvert.DeserializeObject<MenuItem>(menuItemJson);
+                menuItemService.AddMenuItem(menuItem);
+                return $"Menu item '{menuItem.Name}' added successfully";
             }
-        }
-
-        private string HandleAdminAction(string action, string[] parameters)
-        {
-            // Handle admin-specific actions
-            var userService = _serviceProvider.GetService<IUserService>();
-            switch (action)
+            else if (role == (int)RoleEnum.Admin && option == "2")
             {
-                case "GET_USERS":
-                    var users = userService.GetAllUsers();
-                    return string.Join(", ", users.Select(u => u.Name));
-
-                // Add more admin actions here
-
-                default:
-                    return "FAILURE|Unknown admin action";
+                var menuItemService = serviceProvider.GetService<IMenuItemService>();
+                string menuItemJson = parts[3];
+                MenuItemUpdateRequestDTO menuItem = JsonConvert.DeserializeObject<MenuItemUpdateRequestDTO>(menuItemJson);
+                menuItemService.UpdateMenuItem(menuItem);
+                return $"Menu item updated successfully";
             }
-        }
-
-        private string HandleChefAction(string action, string[] parameters)
-        {
-            // Handle chef-specific actions
-            var menuItemService = _serviceProvider.GetService<IMenuItemService>();
-            switch (action)
+            else if (role == (int)RoleEnum.Admin && option == "3")
             {
-                case "ADD_MENU_ITEM":
-                    var menuItemName = parameters[0];
-                    var menuItemType = (MenuItemType)Enum.Parse(typeof(MenuItemType), parameters[1]);
-                    var menuItemPrice = decimal.Parse(parameters[2]);
-                    var menuItem = new MenuItem
-                    {
-                        Name = menuItemName,
-                        Type = menuItemType,
-                        Price = menuItemPrice,
-                        AvailabilityStatusId = (int)AvailabilityStatusEnum.Available
-                    };
-                    menuItemService.AddMenuItem(menuItem);
-                    return "SUCCESS|Menu item added";
-
-                // Add more chef actions here
-
-                default:
-                    return "FAILURE|Unknown chef action";
+                var menuItemService = serviceProvider.GetService<IMenuItemService>();
+                int menuItemId = int.Parse(parts[3]);
+                menuItemService.DeleteMenuItem(menuItemId);
+                return $"Menu item deleted successfully";
             }
-        }
-
-        private string HandleEmployeeAction(string action, string[] parameters)
-        {
-            // Handle employee-specific actions
-            var feedbackService = _serviceProvider.GetService<IFeedbackService>();
-            switch (action)
+            else if (role == (int)RoleEnum.Admin && option == "4")
             {
-                case "ADD_FEEDBACK":
-                    var menuItemId = int.Parse(parameters[0]);
-                    var rating = int.Parse(parameters[1]);
-                    var comment = parameters[2];
-                    var feedback = new Feedback
-                    {
-                        Id = menuItemId,
-                        Rating = rating,
-                        Comment = comment,
-                        Date = DateTime.Now
-                    };
-                    feedbackService.SubmitFeedback(feedback);
-                    return "SUCCESS|Feedback added";
-
-                // Add more employee actions here
-
-                default:
-                    return "FAILURE|Unknown employee action";
+                var menuItemService = serviceProvider.GetService<IMenuItemService>();
+                var menuItems = menuItemService.GetAvailableMenuItems().ToList();
+                var response = JsonConvert.SerializeObject(menuItems);
+                return response;
+            }
+            else if (role == (int)RoleEnum.Chef && option == "1")
+            {
+                var recommendationService = serviceProvider.GetService<IRecommendationService>();
+                string recommendationJson = parts[3];
+                GetRecommendationRequestDTO getRecommendationRequest = JsonConvert.DeserializeObject<GetRecommendationRequestDTO>(recommendationJson);
+                var recommendationItem = recommendationService.GetRecommendations(getRecommendationRequest.NumberOfItemsToRecommend, getRecommendationRequest.MenuItemType);
+                var response = JsonConvert.SerializeObject(recommendationItem);
+                return response;
+            }
+            else
+            {
+                // Handle other options based on the role
+                return $"Option {option} selected";
             }
         }
     }

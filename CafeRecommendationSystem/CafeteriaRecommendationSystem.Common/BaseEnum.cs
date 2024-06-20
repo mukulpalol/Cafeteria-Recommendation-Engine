@@ -2,6 +2,7 @@
 {
     public enum RoleEnum
     {
+        None = 0,
         Admin = 1,
         Chef = 2,
         Employee = 3
@@ -11,13 +12,26 @@
     {
         Breakfast = 1,
         Lunch = 2,
-        Dinner = 3
+        Dinner = 3,
+        Beverage = 4
     }
 
     public enum AvailabilityStatusEnum
     {
         Available = 1,
         Unavailable = 2,
-        PermanentlyDeleted = 3
+        Deleted = 3,
+        OutOfStock = 4,
+        OnHold = 5
+    }
+
+    public enum NotificationTypeEnum
+    {
+        NewFoodItemAdded = 1,
+        FoodItemRemoved = 2,
+        FoodItemPriceUpdated = 3,
+        FoodItemAvailabilityUpdated = 4,
+        FoodItemVoting = 5,
+        FinalMenu = 6
     }
 }

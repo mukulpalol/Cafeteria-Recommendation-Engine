@@ -4,6 +4,7 @@ using CafeteriaRecommendationSystem.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CafeteriaRecommendationSystem.DAL.Migrations
 {
     [DbContext(typeof(CafeDbContext))]
-    partial class CafeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240620160926_addedNotificationTypeTable")]
+    partial class addedNotificationTypeTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,233 +110,6 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Feedback", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Comment = "Delicious dosa!",
-                            Date = new DateTime(2024, 6, 6, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1444),
-                            MenuItemId = 1,
-                            Rating = 4,
-                            UserId = 3
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Comment = "Best biryani ever!",
-                            Date = new DateTime(2024, 6, 8, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1481),
-                            MenuItemId = 8,
-                            Rating = 5,
-                            UserId = 5
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Comment = "Poha was okay.",
-                            Date = new DateTime(2024, 6, 9, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1493),
-                            MenuItemId = 3,
-                            Rating = 3,
-                            UserId = 7
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Comment = "Paneer masala was tasty.",
-                            Date = new DateTime(2024, 6, 10, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1497),
-                            MenuItemId = 4,
-                            Rating = 4,
-                            UserId = 4
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Comment = "Amazing butter chicken!",
-                            Date = new DateTime(2024, 6, 21, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1500),
-                            MenuItemId = 11,
-                            Rating = 5,
-                            UserId = 6
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Comment = "Idli was soft and tasty.",
-                            Date = new DateTime(2024, 6, 7, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1511),
-                            MenuItemId = 2,
-                            Rating = 4,
-                            UserId = 8
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Comment = "Chole bhature was too spicy.",
-                            Date = new DateTime(2024, 6, 9, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1526),
-                            MenuItemId = 7,
-                            Rating = 3,
-                            UserId = 9
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Comment = "Dal tadka was too salty.",
-                            Date = new DateTime(2024, 6, 10, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1529),
-                            MenuItemId = 10,
-                            Rating = 2,
-                            UserId = 10
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Comment = "Rajma chawal was good.",
-                            Date = new DateTime(2024, 6, 8, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1531),
-                            MenuItemId = 5,
-                            Rating = 4,
-                            UserId = 3
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Comment = "Loved the veg thali!",
-                            Date = new DateTime(2024, 6, 9, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1533),
-                            MenuItemId = 6,
-                            Rating = 5,
-                            UserId = 4
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Comment = "Dosa was cold.",
-                            Date = new DateTime(2024, 6, 7, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1535),
-                            MenuItemId = 1,
-                            Rating = 3,
-                            UserId = 5
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Comment = "Biryani had good flavors.",
-                            Date = new DateTime(2024, 6, 8, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1537),
-                            MenuItemId = 8,
-                            Rating = 4,
-                            UserId = 6
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Comment = "Poha was excellent!",
-                            Date = new DateTime(2024, 6, 10, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1539),
-                            MenuItemId = 3,
-                            Rating = 5,
-                            UserId = 7
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Comment = "Paneer masala was too oily.",
-                            Date = new DateTime(2024, 6, 9, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1541),
-                            MenuItemId = 4,
-                            Rating = 2,
-                            UserId = 8
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Comment = "Butter chicken was average.",
-                            Date = new DateTime(2024, 6, 21, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1543),
-                            MenuItemId = 11,
-                            Rating = 3,
-                            UserId = 9
-                        },
-                        new
-                        {
-                            Id = 16,
-                            Comment = "Idli sambar was perfect.",
-                            Date = new DateTime(2024, 6, 6, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1545),
-                            MenuItemId = 2,
-                            Rating = 4,
-                            UserId = 10
-                        },
-                        new
-                        {
-                            Id = 17,
-                            Comment = "Chole bhature were amazing!",
-                            Date = new DateTime(2024, 6, 8, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1547),
-                            MenuItemId = 7,
-                            Rating = 5,
-                            UserId = 3
-                        },
-                        new
-                        {
-                            Id = 18,
-                            Comment = "Dal tadka was flavorful.",
-                            Date = new DateTime(2024, 6, 10, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1549),
-                            MenuItemId = 10,
-                            Rating = 3,
-                            UserId = 4
-                        },
-                        new
-                        {
-                            Id = 19,
-                            Comment = "Rajma chawal was delicious.",
-                            Date = new DateTime(2024, 6, 9, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1551),
-                            MenuItemId = 5,
-                            Rating = 4,
-                            UserId = 5
-                        },
-                        new
-                        {
-                            Id = 20,
-                            Comment = "Veg thali was satisfying.",
-                            Date = new DateTime(2024, 6, 10, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1553),
-                            MenuItemId = 6,
-                            Rating = 5,
-                            UserId = 6
-                        },
-                        new
-                        {
-                            Id = 21,
-                            Comment = "Dosa was okay.",
-                            Date = new DateTime(2024, 6, 7, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1557),
-                            MenuItemId = 1,
-                            Rating = 3,
-                            UserId = 7
-                        },
-                        new
-                        {
-                            Id = 22,
-                            Comment = "Biryani was spicy and tasty.",
-                            Date = new DateTime(2024, 6, 9, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1559),
-                            MenuItemId = 8,
-                            Rating = 4,
-                            UserId = 8
-                        },
-                        new
-                        {
-                            Id = 23,
-                            Comment = "Poha was excellent as always.",
-                            Date = new DateTime(2024, 6, 10, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1561),
-                            MenuItemId = 3,
-                            Rating = 5,
-                            UserId = 9
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Comment = "Paneer masala was too salty.",
-                            Date = new DateTime(2024, 6, 8, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1563),
-                            MenuItemId = 4,
-                            Rating = 2,
-                            UserId = 10
-                        },
-                        new
-                        {
-                            Id = 25,
-                            Comment = "Butter chicken was good.",
-                            Date = new DateTime(2024, 6, 9, 2, 3, 7, 100, DateTimeKind.Local).AddTicks(1565),
-                            MenuItemId = 11,
-                            Rating = 3,
-                            UserId = 3
-                        });
                 });
 
             modelBuilder.Entity("CafeteriaRecommendationSystem.DAL.Models.MenuItem", b =>
@@ -349,9 +125,6 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         .HasColumnType("int")
                         .HasColumnName("AvailabilityStatusID");
 
-                    b.Property<string>("GeneralSentiment")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -364,9 +137,6 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18, 0)");
 
-                    b.Property<decimal>("SentimentScore")
-                        .HasColumnType("decimal(18, 2)");
-
                     b.Property<int>("TypeId")
                         .HasColumnType("int")
                         .HasColumnName("TypeID");
@@ -378,96 +148,6 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                     b.HasIndex("TypeId");
 
                     b.ToTable("MenuItems");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 5,
-                            AvailabilityStatusId = 1,
-                            GeneralSentiment = "good",
-                            IsDeleted = false,
-                            Name = "Rajma Chawal",
-                            Price = 40.00m,
-                            SentimentScore = 0.49m,
-                            TypeId = 2
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AvailabilityStatusId = 1,
-                            GeneralSentiment = "good",
-                            IsDeleted = false,
-                            Name = "Veg Thali",
-                            Price = 60.00m,
-                            SentimentScore = 0.49m,
-                            TypeId = 2
-                        },
-                        new
-                        {
-                            Id = 7,
-                            AvailabilityStatusId = 1,
-                            GeneralSentiment = "good",
-                            IsDeleted = false,
-                            Name = "Chole Bhature",
-                            Price = 45.00m,
-                            SentimentScore = 0.49m,
-                            TypeId = 2
-                        },
-                        new
-                        {
-                            Id = 8,
-                            AvailabilityStatusId = 1,
-                            GeneralSentiment = "good",
-                            IsDeleted = false,
-                            Name = "Chicken Biryani",
-                            Price = 70.00m,
-                            SentimentScore = 0.49m,
-                            TypeId = 3
-                        },
-                        new
-                        {
-                            Id = 9,
-                            AvailabilityStatusId = 1,
-                            GeneralSentiment = "good",
-                            IsDeleted = false,
-                            Name = "Roti Sabzi",
-                            Price = 35.00m,
-                            SentimentScore = 0.49m,
-                            TypeId = 3
-                        },
-                        new
-                        {
-                            Id = 10,
-                            AvailabilityStatusId = 1,
-                            GeneralSentiment = "good",
-                            IsDeleted = false,
-                            Name = "Dal Tadka",
-                            Price = 30.00m,
-                            SentimentScore = 0.49m,
-                            TypeId = 3
-                        },
-                        new
-                        {
-                            Id = 11,
-                            AvailabilityStatusId = 1,
-                            GeneralSentiment = "good",
-                            IsDeleted = false,
-                            Name = "Butter Chicken",
-                            Price = 80.00m,
-                            SentimentScore = 0.49m,
-                            TypeId = 3
-                        },
-                        new
-                        {
-                            Id = 12,
-                            AvailabilityStatusId = 1,
-                            GeneralSentiment = "good",
-                            IsDeleted = false,
-                            Name = "Veg Biryani",
-                            Price = 60.00m,
-                            SentimentScore = 0.49m,
-                            TypeId = 3
-                        });
                 });
 
             modelBuilder.Entity("CafeteriaRecommendationSystem.DAL.Models.MenuItemType", b =>
@@ -610,12 +290,12 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                     b.Property<DateTime>("DateRecommended")
                         .HasColumnType("date");
 
-                    b.Property<bool>("IsFinalised")
-                        .HasColumnType("bit");
-
                     b.Property<int>("MenuItemId")
                         .HasColumnType("int")
                         .HasColumnName("MenuItemID");
+
+                    b.Property<decimal>("RecommendationScore")
+                        .HasColumnType("decimal(18, 0)");
 
                     b.HasKey("Id");
 
@@ -742,96 +422,6 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                             Name = "admin",
                             Password = "Password@1",
                             RoleId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Email = "johndoe@email.com",
-                            EmployeeId = "ITTV/EMP/0004",
-                            Name = "John Doe",
-                            Password = "Password@1",
-                            RoleId = 3
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Email = "janesmith@email.com",
-                            EmployeeId = "ITTV/EMP/0005",
-                            Name = "Jane Smith",
-                            Password = "Password@1",
-                            RoleId = 3
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Email = "rajpatel@email.com",
-                            EmployeeId = "ITTV/EMP/0006",
-                            Name = "Raj Patel",
-                            Password = "Password@1",
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Email = "anitagupta@email.com",
-                            EmployeeId = "ITTV/EMP/0007",
-                            Name = "Anita Gupta",
-                            Password = "Password@1",
-                            RoleId = 3
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Email = "vikramsingh@email.com",
-                            EmployeeId = "ITTV/EMP/0008",
-                            Name = "Vikram Singh",
-                            Password = "Password@1",
-                            RoleId = 3
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Email = "priyakumar@email.com",
-                            EmployeeId = "ITTV/EMP/0009",
-                            Name = "Priya Kumar",
-                            Password = "Password@1",
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Email = "alokverma@email.com",
-                            EmployeeId = "ITTV/EMP/0010",
-                            Name = "Alok Verma",
-                            Password = "Password@1",
-                            RoleId = 3
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Email = "sunitarao@email.com",
-                            EmployeeId = "ITTV/EMP/0011",
-                            Name = "Sunita Rao",
-                            Password = "Password@1",
-                            RoleId = 3
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Email = "karandesai@email.com",
-                            EmployeeId = "ITTV/EMP/0012",
-                            Name = "Karan Desai",
-                            Password = "Password@1",
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Email = "meerasharma@email.com",
-                            EmployeeId = "ITTV/EMP/0013",
-                            Name = "Meera Sharma",
-                            Password = "Password@1",
-                            RoleId = 3
                         });
                 });
 
