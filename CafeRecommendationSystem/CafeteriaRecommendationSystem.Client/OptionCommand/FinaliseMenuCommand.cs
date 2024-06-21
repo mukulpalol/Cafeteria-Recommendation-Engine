@@ -5,22 +5,21 @@ using System.Text;
 
 namespace CafeteriaRecommendationSystem.Client.OptionCommand
 {
-    internal class RollOutMenuCommand : ICommand
+    internal class FinaliseMenuCommand : ICommand
     {
-        private NetworkStream _stream;
-        public RollOutMenuCommand(NetworkStream stream)
+        private readonly NetworkStream _stream;
+        public FinaliseMenuCommand(NetworkStream stream)
         {
             _stream = stream;
         }
-
         public void Execute(RoleEnum role)
         {
-            Console.Write("Enter all menu item id for rolling out menu (comma seperated): ");
+            Console.Write("Enter all menu item id for finalising menu (comma seperated): ");
             string menuItemIdsInput = Console.ReadLine();
             var menuItemIdList = menuItemIdsInput.Split(',').Select(int.Parse).ToArray().ToList();
 
-            string rollOutMenuJson = JsonConvert.SerializeObject(menuItemIdList);
-            string optionRequest = $"option|{(int)role}|2|{rollOutMenuJson}";
+            string finaliseMenuJson = JsonConvert.SerializeObject(menuItemIdList);
+            string optionRequest = $"option|{(int)role}|3|{finaliseMenuJson}";
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
 

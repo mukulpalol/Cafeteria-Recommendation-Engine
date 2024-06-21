@@ -141,7 +141,7 @@ namespace CafeteriaRecommendationSystem
                 menuItemService.DeleteMenuItem(menuItemId);
                 return $"Menu item deleted successfully";
             }
-            else if (role == (int)RoleEnum.Admin && option == "4")
+            else if ((role == (int)RoleEnum.Admin || role == (int)RoleEnum.Chef || role == (int)RoleEnum.Employee) && option == "4")
             {
                 var menuItemService = serviceProvider.GetService<IMenuItemService>();
                 var menuItems = menuItemService.GetAvailableMenuItems().ToList();
@@ -156,6 +156,95 @@ namespace CafeteriaRecommendationSystem
                 var recommendationItem = recommendationService.GetRecommendations(getRecommendationRequest.NumberOfItemsToRecommend, getRecommendationRequest.MenuItemType);
                 var response = JsonConvert.SerializeObject(recommendationItem);
                 return response;
+            }
+            else if (role == (int)RoleEnum.Chef && option == "2")
+            {
+                var recommendationService = serviceProvider.GetService<IRecommendationService>();
+                var menuItemService = serviceProvider.GetService<IMenuItemService>();
+                string rollOutRequestJson = parts[3];
+                List<int> menuItemIdList = JsonConvert.DeserializeObject<List<int>>(rollOutRequestJson);
+                foreach (var menuItemId in menuItemIdList)
+                {
+                    var menuItem = menuItemService.GetMenuItemById(menuItemId);
+                    Recommendation recommendation = new Recommendation()
+                    {
+                        MenuItemId = menuItemId,
+                        MenuItem = menuItem,
+                        DateRecommended = DateTime.UtcNow,
+                        IsFinalised = false
+                    };
+                    recommendationService.AddRecommendation(recommendation);
+                }
+                return "Menu rolled out successfully";
+            }
+            else if (role == (int)RoleEnum.Chef && option == "3")
+            {
+                var recommendationService = serviceProvider.GetService<IRecommendationService>();
+                string rollOutRequestJson = parts[3];
+                List<int> menuItemIdList = JsonConvert.DeserializeObject<List<int>>(rollOutRequestJson);
+                foreach (var menuItemId in menuItemIdList)
+                {
+                    var recommendation = recommendationService.GetRecommendationByMenuItem(menuItemId);
+                    if (recommendation == null)
+                    {
+                        return "Entered meny item was not rolled out - Finalising unsuccessful";
+                    }
+                }
+                foreach (var menuItemId in menuItemIdList)
+                {
+                    var recommendation = recommendationService.GetRecommendationByMenuItem(menuItemId);
+                    if (recommendation != null)
+                    {
+                        recommendation.IsFinalised = true;
+                        recommendationService.UpdateRecommendation(recommendation);                        
+                    }
+                }
+                return "Menu finalised";
+            }
+            else if (role == (int)RoleEnum.Employee && option == "1")
+            {
+                var selectionService = serviceProvider.GetService<ISelectionService>();
+                var menuItemService = serviceProvider.GetService<IMenuItemService>();
+                var recommendationService = serviceProvider.GetService<IRecommendationService>();
+                string selectioinRequestJson = parts[3];
+                var selectionResponse = JsonConvert.DeserializeObject<SelectionRequestDTO>(selectioinRequestJson);
+                var menuItem = menuItemService.GetMenuItemById(selectionResponse.MenuItemId);
+                if (!selectionService.CheckSelectionExists(selectionResponse.UserId, selectionResponse.MenuItemId))
+                {
+                    if (menuItem == null)
+                    {
+                        return "Invalid menu item id";
+                    }
+                    if (parts[4] == MenuItemTypeEnum.Breakfast.ToString())
+                    {
+                        if (menuItem.TypeId != (int)MenuItemTypeEnum.Breakfast)
+                        {
+                            return "Entered menu item is not for breakfast";
+                        }
+                    }
+                    else if (parts[4] == MenuItemTypeEnum.Lunch.ToString())
+                    {
+                        if (menuItem.TypeId != (int)MenuItemTypeEnum.Lunch)
+                        {
+                            return "Entered menu item is not for lunch";
+                        }
+                    }
+                    else if (parts[4] == MenuItemTypeEnum.Dinner.ToString())
+                    {
+                        if (menuItem.TypeId != (int)MenuItemTypeEnum.Dinner)
+                        {
+                            return "Entered menu item is not for dinner";
+                        }
+                    }
+                    var recommendation = recommendationService.GetRecommendationByMenuItem(selectionResponse.MenuItemId);
+                    if (recommendation == null)
+                    {
+                        return "Entered menu item was not rolled out";
+                    }
+                    selectionService.AddSelection(selectionResponse.UserId, selectionResponse.MenuItemId);
+                    return "Breakfast selection complete";
+                }
+                return "Breakfast selection already done";
             }
             else
             {

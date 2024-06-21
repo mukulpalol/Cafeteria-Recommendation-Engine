@@ -32,7 +32,7 @@ namespace CafeteriaRecommendationSystem.Client
             {
                 1 => new GetRecommendationCommand(_stream),
                 2 => new RollOutMenuCommand(_stream),
-                3 => new DeleteMenuItemCommand(_stream),
+                3 => new FinaliseMenuCommand(_stream),
                 4 => new ViewMenuCommand(_stream),
                 0 => null,
                 _ => throw new ArgumentException("Invalid option")

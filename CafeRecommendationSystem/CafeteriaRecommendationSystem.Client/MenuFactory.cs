@@ -11,7 +11,7 @@ namespace CafeteriaRecommendationSystem.Client
             {
                 RoleEnum.Admin => new AdminMenu(userId, stream),
                 RoleEnum.Chef => new ChefMenu(userId, stream),
-                RoleEnum.Employee => new EmployeeMenu(),
+                RoleEnum.Employee => new EmployeeMenu(userId, stream),
                 _ => throw new ArgumentException("Invalid role")
             };
         }

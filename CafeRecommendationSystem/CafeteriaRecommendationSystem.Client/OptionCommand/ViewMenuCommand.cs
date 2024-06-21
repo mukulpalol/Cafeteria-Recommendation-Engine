@@ -20,7 +20,7 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
 
-            byte[] response = new byte[2048];
+            byte[] response = new byte[8192];
             int bytes = _stream.Read(response, 0, response.Length);
             string serverResponse = Encoding.ASCII.GetString(response, 0, bytes);
             var menuItems = JsonConvert.DeserializeObject<List<MenuItem>>(serverResponse);
