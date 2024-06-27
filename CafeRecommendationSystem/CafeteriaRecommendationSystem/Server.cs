@@ -26,64 +26,73 @@ namespace CafeteriaRecommendationSystem
 
         public static async Task Main(string[] args)
         {
-            var configuration = new ConfigurationBuilder()
-                                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                                 .AddJsonFile("appsettings.json")
-                                 .Build();
-            ConfigureServices(configuration);
-            StartServer();
+            var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+            try
+            {
+                logger.Info("This is a trial log from main.");
+                var configuration = new ConfigurationBuilder()
+                                     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                                     .AddJsonFile("appsettings.json")
+                                     .Build();
+
+                var services = new ServiceCollection();
+                ConfigureServices(services, configuration);
+
+                _serviceProvider = services.BuildServiceProvider();
+
+                StartServer();
+            }
+            catch (Exception exception)
+            {
+                logger.Error(exception, "Stopped program because of exception");
+                throw new Exception(exception.Message);
+            }
+            finally
+            {
+                NLog.LogManager.Shutdown();
+            }
         }
 
-        private static void ConfigureServices(IConfiguration configuration)
+        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            _serviceProvider = new ServiceCollection()
-                .AddDbContext<CafeDbContext>()
-                .AddScoped<IUserRepository, UserRepository>()
-                .AddScoped<IFeedbackRepository, FeedbackRepository>()
-                .AddScoped<IMenuItemRepository, MenuItemRepository>()
-                .AddScoped<INotificationRepository, NotificationRepository>()
-                .AddScoped<IRecommendationRepository, RecommendationRepository>()
-                .AddScoped<ISelectionRepository, SelectionRepository>()
-                .AddScoped<IAuthService, AuthService>()
-                .AddScoped<IBaseService, BaseService>()
-                .AddScoped<IFeedbackService, FeedbackService>()
-                .AddScoped<IMenuItemService, MenuItemService>()
-                .AddScoped<INotificationService, NotificationService>()
-                .AddScoped<IRecommendationService, RecommendationService>()
-                .AddScoped<ISelectionService, SelectionService>()
-                .AddScoped<IUserService, UserService>()
-                .AddLogging(loggingBuilder =>
-                {
-                    loggingBuilder.ClearProviders();
-                    loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-                    loggingBuilder.AddNLog(configuration);
-                })
-                .BuildServiceProvider();
+            services.AddDbContext<CafeDbContext>();
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IRecommendationRepository, RecommendationRepository>();
+            services.AddScoped<ISelectionRepository, SelectionRepository>();
+
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IBaseService, BaseService>();
+            services.AddScoped<IFeedbackService, FeedbackService>();
+            services.AddScoped<IMenuItemService, MenuItemService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IRecommendationService, RecommendationService>();
+            services.AddScoped<ISelectionService, SelectionService>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                loggingBuilder.AddNLog(configuration);
+            });
         }
 
         private static void StartServer()
         {
-            var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+            _listener = new TcpListener(IPAddress.Any, 8888);
+            _listener.Start();
+            Console.WriteLine("Server started...");
 
-            try
-            {
-                _listener = new TcpListener(IPAddress.Any, 8888);
-                _listener.Start();
-                Console.WriteLine("Server started...");
-                logger.Info("This is a trial log.");
-
-                while (true)
-                {
-                    NLog.LogManager.Shutdown();
-                    TcpClient client = _listener.AcceptTcpClient();
-                    Thread clientThread = new Thread(() => HandleClient(client));
-                    clientThread.Start();
-                }
-            }
-            catch (Exception ex) { }
-            finally
+            while (true)
             {
                 NLog.LogManager.Shutdown();
+                TcpClient client = _listener.AcceptTcpClient();
+                Thread clientThread = new Thread(() => HandleClient(client));
+                clientThread.Start();
             }
         }
 
@@ -223,7 +232,7 @@ namespace CafeteriaRecommendationSystem
                     if (recommendation != null)
                     {
                         recommendation.IsFinalised = true;
-                        recommendationService.UpdateRecommendation(recommendation);                        
+                        recommendationService.UpdateRecommendation(recommendation);
                     }
                 }
                 return "Menu finalised";
