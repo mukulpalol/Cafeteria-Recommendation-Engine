@@ -170,7 +170,7 @@ namespace CafeteriaRecommendationSystem
                     {
                         MenuItemId = menuItemId,
                         MenuItem = menuItem,
-                        DateRecommended = DateTime.UtcNow,
+                        RecommendationDate = DateTime.UtcNow,
                         IsFinalised = false
                     };
                     recommendationService.AddRecommendation(recommendation);

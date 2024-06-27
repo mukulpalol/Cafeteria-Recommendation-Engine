@@ -70,7 +70,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
 
         public void AddRecommendation(Recommendation recommendation)
         {
-            bool alreadyExists = _recommendationRepository.GetAll().Any(r => r.MenuItemId == recommendation.MenuItemId && r.DateRecommended.Date == recommendation.DateRecommended);
+            bool alreadyExists = _recommendationRepository.GetAll().Any(r => r.MenuItemId == recommendation.MenuItemId && r.RecommendationDate.Date == recommendation.RecommendationDate);
             if (!alreadyExists)
             {
                 _recommendationRepository.Add(recommendation);
@@ -85,7 +85,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
 
         public Recommendation GetRecommendationByMenuItem(int menuItemId)
         {
-            var recommendation = _recommendationRepository.GetAll().Where(e => e.MenuItemId == menuItemId && e.DateRecommended == DateTime.UtcNow).FirstOrDefault();
+            var recommendation = _recommendationRepository.GetAll().Where(e => e.MenuItemId == menuItemId && e.RecommendationDate == DateTime.UtcNow).FirstOrDefault();
             return recommendation;
         }
     }

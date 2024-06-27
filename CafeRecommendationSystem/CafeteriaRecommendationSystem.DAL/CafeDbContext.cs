@@ -93,6 +93,7 @@ namespace CafeteriaRecommendationSystem.DAL
                     .HasMaxLength(1000)
                     .IsUnicode(false);
                 entity.Property(e => e.UserId).HasColumnName("UserID");
+                entity.Property(e => e.IsDelivered).HasColumnType("bit");
 
                 entity.HasOne(d => d.User).WithMany(p => p.Notifications)
                     .HasForeignKey(d => d.UserId)
@@ -114,7 +115,7 @@ namespace CafeteriaRecommendationSystem.DAL
             modelBuilder.Entity<Recommendation>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
-                entity.Property(e => e.DateRecommended).HasColumnType("date");
+                entity.Property(e => e.RecommendationDate).HasColumnType("date");
                 entity.Property(e => e.MenuItemId).HasColumnName("MenuItemID");
                 entity.Property(e => e.IsFinalised).HasColumnType("bit");
 
