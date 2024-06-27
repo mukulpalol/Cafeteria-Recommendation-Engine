@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.11" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CafeteriaRecommendationSystem.Common\CafeteriaRecommendationSystem.Common.csproj" />
     <ProjectReference Include="..\CafeteriaRecommendationSystem.DAL\CafeteriaRecommendationSystem.DAL.csproj" />
   </ItemGroup>

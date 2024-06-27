@@ -6,8 +6,13 @@ using CafeteriaRecommendationSystem.DAL.Repositories;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.Services;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using NLog;
+using NLog.Extensions.Logging;
+using NLog.Web;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -21,11 +26,15 @@ namespace CafeteriaRecommendationSystem
 
         public static async Task Main(string[] args)
         {
-            ConfigureServices();
+            var configuration = new ConfigurationBuilder()
+                                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                                 .AddJsonFile("appsettings.json")
+                                 .Build();
+            ConfigureServices(configuration);
             StartServer();
         }
 
-        private static void ConfigureServices()
+        private static void ConfigureServices(IConfiguration configuration)
         {
             _serviceProvider = new ServiceCollection()
                 .AddDbContext<CafeDbContext>()
@@ -43,20 +52,38 @@ namespace CafeteriaRecommendationSystem
                 .AddScoped<IRecommendationService, RecommendationService>()
                 .AddScoped<ISelectionService, SelectionService>()
                 .AddScoped<IUserService, UserService>()
+                .AddLogging(loggingBuilder =>
+                {
+                    loggingBuilder.ClearProviders();
+                    loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                    loggingBuilder.AddNLog(configuration);
+                })
                 .BuildServiceProvider();
         }
 
         private static void StartServer()
         {
-            _listener = new TcpListener(IPAddress.Any, 8888);
-            _listener.Start();
-            Console.WriteLine("Server started...");
+            var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
-            while (true)
+            try
             {
-                TcpClient client = _listener.AcceptTcpClient();
-                Thread clientThread = new Thread(() => HandleClient(client));
-                clientThread.Start();
+                _listener = new TcpListener(IPAddress.Any, 8888);
+                _listener.Start();
+                Console.WriteLine("Server started...");
+                logger.Info("This is a trial log.");
+
+                while (true)
+                {
+                    NLog.LogManager.Shutdown();
+                    TcpClient client = _listener.AcceptTcpClient();
+                    Thread clientThread = new Thread(() => HandleClient(client));
+                    clientThread.Start();
+                }
+            }
+            catch (Exception ex) { }
+            finally
+            {
+                NLog.LogManager.Shutdown();
             }
         }
 
