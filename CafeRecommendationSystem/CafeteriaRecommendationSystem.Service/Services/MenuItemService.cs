@@ -3,7 +3,6 @@ using CafeteriaRecommendationSystem.Common.DTO;
 using CafeteriaRecommendationSystem.DAL.Models;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
-using Microsoft.EntityFrameworkCore;
 
 namespace CafeteriaRecommendationSystem.Service.Services
 {
@@ -11,11 +10,13 @@ namespace CafeteriaRecommendationSystem.Service.Services
     {
         private readonly IMenuItemRepository _menuItemRepository;
         private readonly IFeedbackRepository _feedbackRepository;
+        private readonly IRecommendationRepository _recommendationRepository;
 
-        public MenuItemService(IMenuItemRepository menuItemRepository, IFeedbackRepository feedbackRepository)
+        public MenuItemService(IMenuItemRepository menuItemRepository, IFeedbackRepository feedbackRepository, IRecommendationRepository recommendationRepository)
         {
             _menuItemRepository = menuItemRepository;
             _feedbackRepository = feedbackRepository;
+            _recommendationRepository = recommendationRepository;
         }
 
         public void AddMenuItem(MenuItem menuItem)
@@ -33,7 +34,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 if (menuItem.TypeId != null) menuItemToUpdate.TypeId = (int)menuItem.TypeId;
                 if (menuItem.AvailabilityStatusId != null) menuItemToUpdate.AvailabilityStatusId = (int)menuItem.AvailabilityStatusId;
                 _menuItemRepository.Update(menuItemToUpdate);
-            }            
+            }
         }
 
         public void UpdateMenuItemAvailability(User user, MenuItem menuItem, int AvailabilityStatusId)
@@ -48,7 +49,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
             var sentimentScore = _feedbackRepository.GetAll().Where(f => f.MenuItemId == menuItemId).Average(f => f.SentimentScore);
             var menuItem = _menuItemRepository.GetById(menuItemId);
             menuItem.SentimentScore = (decimal)sentimentScore;
-            _menuItemRepository.Update(menuItem);            
+            _menuItemRepository.Update(menuItem);
         }
 
         public void DeleteMenuItem(int menuItemId)
@@ -58,9 +59,9 @@ namespace CafeteriaRecommendationSystem.Service.Services
             _menuItemRepository.Update(menuItem);
         }
 
-        public IEnumerable<MenuItem> GetAllMenuItems()
+        public List<MenuItem> GetAllMenuItems()
         {
-            return _menuItemRepository.GetAll();
+            return _menuItemRepository.GetAll().ToList();
         }
 
         public MenuItem GetMenuItemById(int menuItemId)
@@ -68,9 +69,37 @@ namespace CafeteriaRecommendationSystem.Service.Services
             return _menuItemRepository.GetById(menuItemId);
         }
 
-        public IEnumerable<MenuItem> GetAvailableMenuItems()
+        public List<MenuItem> GetAvailableMenuItems()
         {
-            return _menuItemRepository.GetAll().Where(m => m.AvailabilityStatusId == (int)AvailabilityStatusEnum.Available);
+            return _menuItemRepository.GetAll().Where(m => m.AvailabilityStatusId == (int)AvailabilityStatusEnum.Available).ToList();
+        }
+
+        public List<MenuItem> GetRolledOutMenu()
+        {
+            var menuItemIdsWithRecommendationToday = _recommendationRepository.GetAll()
+                .Where(r => r.RecommendationDate.Date == DateTime.UtcNow)
+                .Select(r => r.MenuItemId)
+                .ToList();
+            List<MenuItem> rolledOutMenu = new List<MenuItem>();
+            foreach(var menuItemId in menuItemIdsWithRecommendationToday)
+            {
+                rolledOutMenu.Add(_menuItemRepository.GetById(menuItemId));
+            }
+            return rolledOutMenu;
+        }
+
+        public List<MenuItem> GetFinalisedMenu()
+        {
+            var menuItemIdsWithRecommendationToday = _recommendationRepository.GetAll()
+                .Where(r => r.RecommendationDate.Date == DateTime.UtcNow && r.IsFinalised == true)
+                .Select(r => r.MenuItemId)
+                .ToList();
+            List<MenuItem> finalisedMenu = new List<MenuItem>();
+            foreach (var menuItemId in menuItemIdsWithRecommendationToday)
+            {
+                finalisedMenu.Add(_menuItemRepository.GetById(menuItemId));
+            }
+            return finalisedMenu;
         }
     }
 }

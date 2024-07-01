@@ -297,6 +297,20 @@ namespace CafeteriaRecommendationSystem
                 var result = feedbackService.SubmitFeedback(feedbackRequest);
                 return result;
             }
+            else if(role ==(int)RoleEnum.Employee && option == "6")
+            {
+                var menuItemService = serviceProvider.GetService<IMenuItemService>();
+                var menuItems = menuItemService.GetRolledOutMenu();
+                var response = JsonConvert.SerializeObject(menuItems);
+                return response;
+            }
+            else if (role == (int)RoleEnum.Employee && option == "7")
+            {
+                var menuItemService = serviceProvider.GetService<IMenuItemService>();
+                var menuItems = menuItemService.GetFinalisedMenu();
+                var response = JsonConvert.SerializeObject(menuItems);
+                return response;
+            }
             else
             {
                 // Handle other options based on the role

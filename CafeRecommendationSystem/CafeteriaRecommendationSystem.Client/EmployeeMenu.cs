@@ -20,7 +20,9 @@ namespace CafeteriaRecommendationSystem.Client
             Console.WriteLine("3. Select dinner item for next day menu");
             Console.WriteLine("4. View menu");
             Console.WriteLine("5. Submit feedback");
-            Console.WriteLine("6. View notifications");
+            Console.WriteLine("6. View rolled out menu");
+            Console.WriteLine("7. View finalized menu for tomorrow");
+            Console.WriteLine("8. View notifications");
             Console.WriteLine("0. Logout");
         }
 
@@ -33,6 +35,8 @@ namespace CafeteriaRecommendationSystem.Client
                 3 => new SelectFoodItemForNextDayMenuCommand(_userId, _stream, Common.MenuItemTypeEnum.Dinner),
                 4 => new ViewMenuCommand(_stream),
                 5 => new SubmitFeedbackCommand(_userId, _stream),
+                6 => new ViewRolledOutMenuCommand(_stream),
+                7 => new ViewFinalizedMenuCommand(_stream),
                 0 => null,
                 _ => throw new ArgumentException("Invalid option")
             };
