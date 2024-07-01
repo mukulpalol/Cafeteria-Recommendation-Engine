@@ -1,4 +1,5 @@
-﻿using CafeteriaRecommendationSystem.DAL.Models;
+﻿using CafeteriaRecommendationSystem.Common.DTO;
+using CafeteriaRecommendationSystem.DAL.Models;
 
 namespace CafeteriaRecommendationSystem.Service.ServicesContract
 {
@@ -7,5 +8,6 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
         void SelectItem(User user, MenuItem menuItem);
         void AddSelection(int userId, int menuItemId);
         bool CheckSelectionExists(int userId, int menuId);
+        public List<RolledOutMenuVotesDTO> GetRolledOutMenuVotes();
     }
 }

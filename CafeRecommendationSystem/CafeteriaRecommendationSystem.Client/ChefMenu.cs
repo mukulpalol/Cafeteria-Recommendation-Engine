@@ -34,6 +34,7 @@ namespace CafeteriaRecommendationSystem.Client
                 2 => new RollOutMenuCommand(_stream),
                 3 => new FinaliseMenuCommand(_stream),
                 4 => new ViewMenuCommand(_stream),
+                5 => new ViewVotesOnRolledOutMenu(_stream),                
                 0 => null,
                 _ => throw new ArgumentException("Invalid option")
             };

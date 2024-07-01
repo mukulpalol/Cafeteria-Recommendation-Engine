@@ -1,4 +1,5 @@
-﻿using CafeteriaRecommendationSystem.DAL.Models;
+﻿using CafeteriaRecommendationSystem.Common.DTO;
+using CafeteriaRecommendationSystem.DAL.Models;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
 
@@ -7,10 +8,12 @@ namespace CafeteriaRecommendationSystem.Service.Services
     public class SelectionService : BaseService, ISelectionService
     {
         private readonly ISelectionRepository _selectionRepository;
+        private readonly IMenuItemRepository _menuItemRepository;
 
-        public SelectionService(ISelectionRepository selectionRepository)
+        public SelectionService(ISelectionRepository selectionRepository, IMenuItemRepository menuItemRepository)
         {
             _selectionRepository = selectionRepository;
+            _menuItemRepository = menuItemRepository;
         }
 
         public void SelectItem(User user, MenuItem menuItem)
@@ -37,6 +40,23 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 return false;
             }
             return true;
+        }
+        public List<RolledOutMenuVotesDTO> GetRolledOutMenuVotes()
+        {
+            var selections = _selectionRepository.GetAll();
+            var menuItems = _menuItemRepository.GetAll();
+
+            var result = selections.Where(s => s.Date.Date == DateTime.Today)
+                                    .GroupBy(s => s.MenuItemId)
+                                    .Select(g => new RolledOutMenuVotesDTO
+                                    {
+                                        MenuItemId = g.Key,
+                                        MenuItemName = menuItems.FirstOrDefault(mi => mi.Id == g.Key).Name,
+                                        NumberOfVotes = g.Count()
+                                    })
+            .ToList();
+
+            return result;
         }
     }
 }
