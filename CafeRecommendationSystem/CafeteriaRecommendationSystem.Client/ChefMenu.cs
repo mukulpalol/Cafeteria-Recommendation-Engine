@@ -22,7 +22,7 @@ namespace CafeteriaRecommendationSystem.Client
             Console.WriteLine("4. View menu");
             Console.WriteLine("5. View votes on rolled out menu items");
             Console.WriteLine("6. View notifications");
-            Console.WriteLine("7. Generate monthly report");
+            // Console.WriteLine("7. Generate monthly report");
             Console.WriteLine("0. Logout");
         }
 

@@ -31,7 +31,7 @@
         FoodItemRemoved = 2,
         FoodItemPriceUpdated = 3,
         FoodItemAvailabilityUpdated = 4,
-        FoodItemVoting = 5,
-        FinalMenu = 6
+        MenuRolledOut = 5,
+        MenuFinalised = 6
     }
 }
