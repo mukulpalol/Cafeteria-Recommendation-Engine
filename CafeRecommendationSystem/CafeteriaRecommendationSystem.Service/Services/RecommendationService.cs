@@ -1,6 +1,7 @@
 ﻿using CafeteriaRecommendationSystem.Common;
 using CafeteriaRecommendationSystem.Common.DTO;
 using CafeteriaRecommendationSystem.DAL.Models;
+using CafeteriaRecommendationSystem.DAL.Repositories;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
 
@@ -87,6 +88,12 @@ namespace CafeteriaRecommendationSystem.Service.Services
         {
             var recommendation = _recommendationRepository.GetAll().Where(e => e.MenuItemId == menuItemId && e.RecommendationDate == DateTime.UtcNow).FirstOrDefault();
             return recommendation;
+        }
+
+        public bool CheckMenuItemWasFinalised(int menuItemId)
+        {
+            var menuItemFinalizationStatus = _recommendationRepository.GetAll().Any(s => s.MenuItemId == menuItemId && s.RecommendationDate == DateTime.UtcNow.AddDays(-1) && s.IsFinalised == true);
+            return menuItemFinalizationStatus;
         }
     }
 }

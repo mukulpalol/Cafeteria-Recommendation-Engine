@@ -28,8 +28,7 @@ namespace CafeteriaRecommendationSystem
         {
             var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
             try
-            {
-                logger.Info("This is a trial log from main.");
+            {                
                 var configuration = new ConfigurationBuilder()
                                      .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                                      .AddJsonFile("appsettings.json")
@@ -40,7 +39,7 @@ namespace CafeteriaRecommendationSystem
 
                 _serviceProvider = services.BuildServiceProvider();
 
-                StartServer();
+                StartServer(logger);
             }
             catch (Exception exception)
             {
@@ -81,16 +80,16 @@ namespace CafeteriaRecommendationSystem
             });
         }
 
-        private static void StartServer()
+        private static void StartServer( Logger logger)
         {
             _listener = new TcpListener(IPAddress.Any, 8888);
             _listener.Start();
-            Console.WriteLine("Server started...");
+            Console.WriteLine("Server started on port 8888.");
 
             while (true)
-            {
-                NLog.LogManager.Shutdown();
+            {                
                 TcpClient client = _listener.AcceptTcpClient();
+                logger.Info($"New client connected: {client.Client.RemoteEndPoint}");
                 Thread clientThread = new Thread(() => HandleClient(client));
                 clientThread.Start();
             }
@@ -237,6 +236,13 @@ namespace CafeteriaRecommendationSystem
                 }
                 return "Menu finalised";
             }
+            else if (role == (int)RoleEnum.Chef && option == "5")
+            {
+                var selectionService = serviceProvider.GetService<ISelectionService>();
+                var voteResponses = selectionService.GetRolledOutMenuVotes();
+                var response = JsonConvert.SerializeObject(voteResponses);
+                return response;
+            }
             else if (role == (int)RoleEnum.Employee && option == "1")
             {
                 var selectionService = serviceProvider.GetService<ISelectionService>();
@@ -281,6 +287,15 @@ namespace CafeteriaRecommendationSystem
                     return "Breakfast selection complete";
                 }
                 return "Breakfast selection already done";
+            }
+            else if(role ==(int)RoleEnum.Employee && option == "5")
+            {
+                var feedbackService = serviceProvider.GetService<IFeedbackService>();
+                string feedbackRequestJson = parts[3];
+                var feedbackRequest = JsonConvert.DeserializeObject<FeedbackRequestDTO>(feedbackRequestJson);
+
+                var result = feedbackService.SubmitFeedback(feedbackRequest);
+                return result;
             }
             else
             {

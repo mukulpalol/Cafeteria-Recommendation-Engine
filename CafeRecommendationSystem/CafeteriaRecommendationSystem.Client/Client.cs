@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using CafeteriaRecommendationSystem.Common;
+﻿using CafeteriaRecommendationSystem.Common;
 using System.Net.Sockets;
 using System.Text;
 
@@ -12,30 +11,37 @@ namespace CafeteriaRecommendationSystem.Client
 
         static void Main(string[] args)
         {
-            client = new TcpClient("127.0.0.1", 8888);
-            stream = client.GetStream();
-
-            AuthenticateUser();
-
-            RoleEnum role;
-            int userId;
-            (role, userId) = ReceiveAuthenticatesUserResponse();
-            IMenu menu = MenuFactory.CreateMenu(role, userId, stream);
-
-            while (true)
+            try
             {
-                menu.DisplayMenu();
-                Console.Write("\nEnter a choice: ");
-                int option = int.Parse(Console.ReadLine());
-                ICommand command = menu.GetCommand(option);
+                client = new TcpClient("127.0.0.1", 8888);
+                stream = client.GetStream();
 
-                if (command == null) break;
+                AuthenticateUser();
 
-                command.Execute(role);
+                RoleEnum role;
+                int userId;
+                (role, userId) = ReceiveAuthenticatesUserResponse();
+                IMenu menu = MenuFactory.CreateMenu(role, userId, stream);
+
+                while (true)
+                {
+                    menu.DisplayMenu();
+                    Console.Write("\nEnter a choice: ");
+                    int option = int.Parse(Console.ReadLine());
+                    ICommand command = menu.GetCommand(option);
+
+                    if (command == null) break;
+
+                    command.Execute(role);
+                }
+
+                stream.Close();
+                client.Close();
             }
-
-            stream.Close();
-            client.Close();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         static void AuthenticateUser()
@@ -44,7 +50,7 @@ namespace CafeteriaRecommendationSystem.Client
             string email = Console.ReadLine();
             Console.Write("Enter password: ");
             string password = Console.ReadLine();
-            string loginRequest ="login|" + email + "|" + password;
+            string loginRequest = "login|" + email + "|" + password;
             byte[] data = Encoding.ASCII.GetBytes(loginRequest);
             stream.Write(data, 0, data.Length);
         }

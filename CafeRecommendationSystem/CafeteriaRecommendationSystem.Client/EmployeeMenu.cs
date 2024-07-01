@@ -1,5 +1,4 @@
 ﻿using CafeteriaRecommendationSystem.Client.OptionCommand;
-using System.IO;
 using System.Net.Sockets;
 
 namespace CafeteriaRecommendationSystem.Client
@@ -19,9 +18,9 @@ namespace CafeteriaRecommendationSystem.Client
             Console.WriteLine("1. Select breakfast item for next day menu");
             Console.WriteLine("2. Select lunch item for next day menu");
             Console.WriteLine("3. Select dinner item for next day menu");
-            Console.WriteLine("4. View menu");            
-            Console.WriteLine("5. Submit feedback");            
-            Console.WriteLine("6. View notifications");            
+            Console.WriteLine("4. View menu");
+            Console.WriteLine("5. Submit feedback");
+            Console.WriteLine("6. View notifications");
             Console.WriteLine("0. Logout");
         }
 
@@ -33,6 +32,7 @@ namespace CafeteriaRecommendationSystem.Client
                 2 => new SelectFoodItemForNextDayMenuCommand(_userId, _stream, Common.MenuItemTypeEnum.Lunch),
                 3 => new SelectFoodItemForNextDayMenuCommand(_userId, _stream, Common.MenuItemTypeEnum.Dinner),
                 4 => new ViewMenuCommand(_stream),
+                5 => new SubmitFeedbackCommand(_userId, _stream),
                 0 => null,
                 _ => throw new ArgumentException("Invalid option")
             };

@@ -10,5 +10,6 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
         void AddRecommendation(Recommendation recommendation);
         void UpdateRecommendation(Recommendation recommendation);
         Recommendation GetRecommendationByMenuItem(int menuItemId);
+        bool CheckMenuItemWasFinalised(int menuItemId);
     }
 }

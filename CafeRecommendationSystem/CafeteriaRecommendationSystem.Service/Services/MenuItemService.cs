@@ -3,16 +3,19 @@ using CafeteriaRecommendationSystem.Common.DTO;
 using CafeteriaRecommendationSystem.DAL.Models;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
+using Microsoft.EntityFrameworkCore;
 
 namespace CafeteriaRecommendationSystem.Service.Services
 {
     public class MenuItemService : BaseService, IMenuItemService
     {
         private readonly IMenuItemRepository _menuItemRepository;
+        private readonly IFeedbackRepository _feedbackRepository;
 
-        public MenuItemService(IMenuItemRepository menuItemRepository)
+        public MenuItemService(IMenuItemRepository menuItemRepository, IFeedbackRepository feedbackRepository)
         {
             _menuItemRepository = menuItemRepository;
+            _feedbackRepository = feedbackRepository;
         }
 
         public void AddMenuItem(MenuItem menuItem)
@@ -38,6 +41,14 @@ namespace CafeteriaRecommendationSystem.Service.Services
             EnsureRole(user, RoleEnum.Chef);
             menuItem.AvailabilityStatusId = AvailabilityStatusId;
             _menuItemRepository.Update(menuItem);
+        }
+
+        public void UpdateSentimentScoreOfMenuItem(int menuItemId)
+        {
+            var sentimentScore = _feedbackRepository.GetAll().Where(f => f.MenuItemId == menuItemId).Average(f => f.SentimentScore);
+            var menuItem = _menuItemRepository.GetById(menuItemId);
+            menuItem.SentimentScore = (decimal)sentimentScore;
+            _menuItemRepository.Update(menuItem);            
         }
 
         public void DeleteMenuItem(int menuItemId)

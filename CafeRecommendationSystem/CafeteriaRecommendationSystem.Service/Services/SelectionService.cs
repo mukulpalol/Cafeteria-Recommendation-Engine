@@ -40,7 +40,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 return false;
             }
             return true;
-        }
+        }        
         public List<RolledOutMenuVotesDTO> GetRolledOutMenuVotes()
         {
             var selections = _selectionRepository.GetAll();
