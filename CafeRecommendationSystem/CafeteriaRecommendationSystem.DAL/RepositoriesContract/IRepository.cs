@@ -16,4 +16,6 @@ namespace CafeteriaRecommendationSystem.DAL.RepositoriesContract
     public interface IRecommendationRepository : IRepository<Recommendation> { }
     public interface INotificationRepository : IRepository<Notification> { }
     public interface ISelectionRepository : IRepository<Selection> { }
+    public interface IDiscardedMenuItemRepository : IRepository<DiscardedMenuItem> { }
+    public interface IDiscardedMenuItemFeedbackRepository : IRepository<DiscardedMenuItemFeedback> { }
 }
