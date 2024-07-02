@@ -4,7 +4,7 @@ using CafeteriaRecommendationSystem.DAL.Models;
 
 namespace CafeteriaRecommendationSystem.Service.ServicesContract
 {
-    public interface IRecommendationService : IBaseService
+    public interface IRecommendationService
     {
         List<MenuItemResponseDTO> GetRecommendations(int numberOfRecommendations, MenuItemTypeEnum menuItemType);
         void AddRecommendation(Recommendation recommendation);

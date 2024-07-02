@@ -3,7 +3,7 @@ using CafeteriaRecommendationSystem.DAL.Models;
 
 namespace CafeteriaRecommendationSystem.Service.ServicesContract
 {
-    public interface IFeedbackService : IBaseService
+    public interface IFeedbackService
     {
         string SubmitFeedback(FeedbackRequestDTO feedback);
         List<Feedback> GetFeedbackByMenuItem(int menuItemId);

@@ -5,7 +5,7 @@ using CafeteriaRecommendationSystem.Service.ServicesContract;
 
 namespace CafeteriaRecommendationSystem.Service.Services
 {
-    public class SelectionService : BaseService, ISelectionService
+    public class SelectionService : ISelectionService
     {
         private readonly ISelectionRepository _selectionRepository;
         private readonly IMenuItemRepository _menuItemRepository;

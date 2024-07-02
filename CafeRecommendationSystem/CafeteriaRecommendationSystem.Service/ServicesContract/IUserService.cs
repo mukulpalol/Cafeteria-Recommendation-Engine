@@ -2,7 +2,7 @@
 
 namespace CafeteriaRecommendationSystem.Service.ServicesContract
 {
-    public interface IUserService : IBaseService
+    public interface IUserService
     {
         void AddUser(User user);
         void UpdateUser(User user);

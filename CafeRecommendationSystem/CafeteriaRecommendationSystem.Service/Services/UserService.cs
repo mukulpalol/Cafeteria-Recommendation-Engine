@@ -4,7 +4,7 @@ using CafeteriaRecommendationSystem.Service.ServicesContract;
 
 namespace CafeteriaRecommendationSystem.Service.Services
 {
-    public class UserService : BaseService, IUserService
+    public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
 

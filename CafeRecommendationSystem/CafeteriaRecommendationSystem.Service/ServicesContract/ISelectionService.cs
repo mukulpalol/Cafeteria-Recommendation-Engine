@@ -3,7 +3,7 @@ using CafeteriaRecommendationSystem.DAL.Models;
 
 namespace CafeteriaRecommendationSystem.Service.ServicesContract
 {
-    public interface ISelectionService : IBaseService
+    public interface ISelectionService
     {
         void SelectItem(User user, MenuItem menuItem);
         void AddSelection(int userId, int menuItemId);

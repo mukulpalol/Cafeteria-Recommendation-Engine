@@ -7,7 +7,7 @@ using CafeteriaRecommendationSystem.Service.ServicesContract;
 
 namespace CafeteriaRecommendationSystem.Service.Services
 {
-    public class RecommendationService : BaseService, IRecommendationService
+    public class RecommendationService : IRecommendationService
     {
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IMenuItemRepository _menuItemRepository;

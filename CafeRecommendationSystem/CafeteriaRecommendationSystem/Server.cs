@@ -28,7 +28,7 @@ namespace CafeteriaRecommendationSystem
         {
             var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
             try
-            {                
+            {
                 var configuration = new ConfigurationBuilder()
                                      .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                                      .AddJsonFile("appsettings.json")
@@ -63,8 +63,7 @@ namespace CafeteriaRecommendationSystem
             services.AddScoped<IRecommendationRepository, RecommendationRepository>();
             services.AddScoped<ISelectionRepository, SelectionRepository>();
 
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IBaseService, BaseService>();
+            services.AddScoped<IAuthService, AuthService>();            
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<IMenuItemService, MenuItemService>();
             services.AddScoped<INotificationService, NotificationService>();
@@ -80,14 +79,14 @@ namespace CafeteriaRecommendationSystem
             });
         }
 
-        private static void StartServer( Logger logger)
+        private static void StartServer(Logger logger)
         {
             _listener = new TcpListener(IPAddress.Any, 8888);
             _listener.Start();
             Console.WriteLine("Server started on port 8888.");
 
             while (true)
-            {                
+            {
                 TcpClient client = _listener.AcceptTcpClient();
                 logger.Info($"New client connected: {client.Client.RemoteEndPoint}");
                 Thread clientThread = new Thread(() => HandleClient(client));
@@ -260,7 +259,7 @@ namespace CafeteriaRecommendationSystem
                 }
                 return "Breakfast selection already done";
             }
-            else if(role ==(int)RoleEnum.Employee && option == "5")
+            else if (role == (int)RoleEnum.Employee && option == "5")
             {
                 var feedbackService = serviceProvider.GetService<IFeedbackService>();
                 string feedbackRequestJson = parts[3];
@@ -269,7 +268,7 @@ namespace CafeteriaRecommendationSystem
                 var result = feedbackService.SubmitFeedback(feedbackRequest);
                 return result;
             }
-            else if(role ==(int)RoleEnum.Employee && option == "6")
+            else if (role == (int)RoleEnum.Employee && option == "6")
             {
                 var menuItemService = serviceProvider.GetService<IMenuItemService>();
                 var menuItems = menuItemService.GetRolledOutMenu();
@@ -283,10 +282,29 @@ namespace CafeteriaRecommendationSystem
                 var response = JsonConvert.SerializeObject(menuItems);
                 return response;
             }
+            else if (role == (int)RoleEnum.Employee && option == "8")
+            {
+                var notificationService = serviceProvider.GetService<INotificationService>();
+                int userId = int.Parse(parts[3]);
+                var notifications = notificationService.GetNotifications(userId);
+                string response = string.Empty;
+                if (notifications.Count != 0)
+                {
+                    foreach (var notification in notifications)
+                    {
+                        response += $"> {notification.Message}\n";
+                    }
+                }
+                else
+                {
+                    response = "No notifications to display.\n";
+                }
+                return response;
+            }
             else
             {
                 // Handle other options based on the role
-                return $"Option {option} selected";
+                return $"Option {option} is not a valid option!";
             }
         }
     }
