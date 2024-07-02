@@ -7,6 +7,8 @@ namespace CafeteriaRecommendationSystem.DAL
     public class CafeDbContext : DbContext
     {
         public DbSet<AvailabilityStatus> AvailabilityStatuses { get; set; }
+        public DbSet<DiscardedMenuItem> DiscardedMenuItems { get; set; }
+        public DbSet<DiscardedMenuItemFeedback> DiscardedMenuItemFeedbacks { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
         public virtual DbSet<MenuItemType> MenuItemTypes { get; set; }
@@ -30,6 +32,39 @@ namespace CafeteriaRecommendationSystem.DAL
                 entity.Property(e => e.StatusName)
                     .HasMaxLength(30)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<DiscardedMenuItem>(entity =>
+            {
+                entity.ToTable("DiscardedMenuItem");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.CreatedDate).HasColumnType("date");
+
+                entity.HasOne(d => d.MenuItem).WithMany(p => p.DiscardedMenuItems)
+                    .HasForeignKey(d => d.MenuItemId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DiscardedMenuItem_MenuItems");
+            });
+
+            modelBuilder.Entity<DiscardedMenuItemFeedback>(entity =>
+            {
+                entity.ToTable("DiscardedMenyItemFeedback");
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Date).HasColumnType("date");
+                entity.Property(e => e.Feedback)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.User).WithMany(p => p.DiscardedMenuItemFeedbacks)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DiscardedMenuItemFeedback_Users");
+
+                entity.HasOne(d => d.DiscardedMenuItem).WithMany(p => p.DiscardedMenuItemFeedbacks)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DiscardedMenuItemFeedback_DiscardedMenuItems");
             });
 
             modelBuilder.Entity<Feedback>(entity =>
@@ -179,7 +214,8 @@ namespace CafeteriaRecommendationSystem.DAL
                 new AvailabilityStatus { Id = 2, StatusName = "Unavailable" },
                 new AvailabilityStatus { Id = 3, StatusName = "Deleted" },
                 new AvailabilityStatus { Id = 4, StatusName = "OutOfStock" },
-                new AvailabilityStatus { Id = 5, StatusName = "OnHold" }
+                new AvailabilityStatus { Id = 5, StatusName = "OnHold" },
+                new AvailabilityStatus { Id = 6, StatusName = "Discarded" }
                 );
 
             modelBuilder.Entity<Feedback>().HasData(

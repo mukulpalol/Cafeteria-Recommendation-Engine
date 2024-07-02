@@ -22,7 +22,8 @@
         Unavailable = 2,
         Deleted = 3,
         OutOfStock = 4,
-        OnHold = 5
+        OnHold = 5,
+        Discarded = 6
     }
 
     public enum NotificationTypeEnum

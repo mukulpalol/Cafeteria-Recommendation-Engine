@@ -9,6 +9,7 @@
         public string Password { get; set; } = null!;
         public int RoleId { get; set; }
         public virtual Role Role { get; set; } = null!;
+        public virtual ICollection<DiscardedMenuItemFeedback> DiscardedMenuItemFeedbacks { get; set; } = new List<DiscardedMenuItemFeedback>();
         public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
         public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         public virtual ICollection<Selection> Selections { get; set; } = new List<Selection>();
