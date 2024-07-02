@@ -8,6 +8,8 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
     {
         List<MenuItemResponseDTO> GetRecommendations(int numberOfRecommendations, MenuItemTypeEnum menuItemType);
         void AddRecommendation(Recommendation recommendation);
+        void RollOutMenu(List<int> menuItemIdList);
+        string FinaliseMenu(List<int> menuItemIdList);
         void UpdateRecommendation(Recommendation recommendation);
         Recommendation GetRecommendationByMenuItem(int menuItemId);
         bool CheckMenuItemWasFinalised(int menuItemId);

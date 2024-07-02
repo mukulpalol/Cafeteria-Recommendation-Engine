@@ -12,12 +12,14 @@ namespace CafeteriaRecommendationSystem.Service.Services
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IMenuItemRepository _menuItemRepository;
         private readonly IRecommendationRepository _recommendationRepository;
+        private readonly INotificationService _notificationService;
 
-        public RecommendationService(IFeedbackRepository feedbackRepository, IMenuItemRepository menuItemRepository, IRecommendationRepository recommendationRepository)
+        public RecommendationService(IFeedbackRepository feedbackRepository, IMenuItemRepository menuItemRepository, IRecommendationRepository recommendationRepository, INotificationService notificationService)
         {
             _feedbackRepository = feedbackRepository;
             _menuItemRepository = menuItemRepository;
             _recommendationRepository = recommendationRepository;
+            _notificationService = notificationService;
         }
 
         public List<MenuItemResponseDTO> GetRecommendations(int numberOfRecommendations, MenuItemTypeEnum menuItemType)
@@ -79,6 +81,47 @@ namespace CafeteriaRecommendationSystem.Service.Services
             }
         }
 
+        public void RollOutMenu(List<int> menuItemIdList)
+        {
+            foreach (var menuItemId in menuItemIdList)
+            {
+                var menuItem = _menuItemRepository.GetById(menuItemId);
+                Recommendation recommendation = new Recommendation()
+                {
+                    MenuItemId = menuItemId,
+                    MenuItem = menuItem,
+                    RecommendationDate = DateTime.UtcNow,
+                    IsFinalised = false
+                };
+                AddRecommendation(recommendation);
+                string message = $"Rolled out menu for {DateTime.UtcNow.AddDays(1).ToString("dd-MM-yyyy")}";
+                _notificationService.SendNotification(NotificationTypeEnum.MenuRolledOut, message);
+            }
+        }
+
+        public string FinaliseMenu(List<int> menuItemIdList)
+        {
+            foreach (var menuItemId in menuItemIdList)
+            {
+                var recommendation = GetRecommendationByMenuItem(menuItemId);
+                if (recommendation == null)
+                {
+                    return "Entered meny item was not rolled out - Finalising unsuccessful";
+                }
+            }
+            foreach (var menuItemId in menuItemIdList)
+            {
+                var recommendation = GetRecommendationByMenuItem(menuItemId);
+                if (recommendation != null)
+                {
+                    recommendation.IsFinalised = true;
+                    UpdateRecommendation(recommendation);
+                }
+            }
+            string message = $"Menu finalised for {DateTime.UtcNow.AddDays(1).ToString("dd-MM-yyyy")}";
+            _notificationService.SendNotification(NotificationTypeEnum.MenuRolledOut, message);
+            return "Menu finalised";
+        }
         public void UpdateRecommendation(Recommendation recommendation)
         {
             _recommendationRepository.Update(recommendation);

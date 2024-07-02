@@ -198,18 +198,7 @@ namespace CafeteriaRecommendationSystem
                 var menuItemService = serviceProvider.GetService<IMenuItemService>();
                 string rollOutRequestJson = parts[3];
                 List<int> menuItemIdList = JsonConvert.DeserializeObject<List<int>>(rollOutRequestJson);
-                foreach (var menuItemId in menuItemIdList)
-                {
-                    var menuItem = menuItemService.GetMenuItemById(menuItemId);
-                    Recommendation recommendation = new Recommendation()
-                    {
-                        MenuItemId = menuItemId,
-                        MenuItem = menuItem,
-                        RecommendationDate = DateTime.UtcNow,
-                        IsFinalised = false
-                    };
-                    recommendationService.AddRecommendation(recommendation);
-                }
+                recommendationService.RollOutMenu(menuItemIdList);
                 return "Menu rolled out successfully";
             }
             else if (role == (int)RoleEnum.Chef && option == "3")
@@ -217,24 +206,7 @@ namespace CafeteriaRecommendationSystem
                 var recommendationService = serviceProvider.GetService<IRecommendationService>();
                 string rollOutRequestJson = parts[3];
                 List<int> menuItemIdList = JsonConvert.DeserializeObject<List<int>>(rollOutRequestJson);
-                foreach (var menuItemId in menuItemIdList)
-                {
-                    var recommendation = recommendationService.GetRecommendationByMenuItem(menuItemId);
-                    if (recommendation == null)
-                    {
-                        return "Entered meny item was not rolled out - Finalising unsuccessful";
-                    }
-                }
-                foreach (var menuItemId in menuItemIdList)
-                {
-                    var recommendation = recommendationService.GetRecommendationByMenuItem(menuItemId);
-                    if (recommendation != null)
-                    {
-                        recommendation.IsFinalised = true;
-                        recommendationService.UpdateRecommendation(recommendation);
-                    }
-                }
-                return "Menu finalised";
+                return recommendationService.FinaliseMenu(menuItemIdList);
             }
             else if (role == (int)RoleEnum.Chef && option == "5")
             {
