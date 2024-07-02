@@ -270,7 +270,8 @@ namespace CafeteriaRecommendationSystem.DAL
                 new NotificationType { Id = 3, Name = "FoodItemPriceUpdated" },
                 new NotificationType { Id = 4, Name = "FoodItemAvailabilityUpdated" },
                 new NotificationType { Id = 5, Name = "MenuRolledOut" },
-                new NotificationType { Id = 6, Name = "MenuFinalised" }
+                new NotificationType { Id = 6, Name = "MenuFinalised" },
+                new NotificationType { Id = 7, Name = "MenuItemDiscarded" }
                 );
 
             modelBuilder.Entity<Role>().HasData(

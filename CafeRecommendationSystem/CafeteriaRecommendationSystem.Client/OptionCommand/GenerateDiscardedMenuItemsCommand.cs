@@ -4,25 +4,24 @@ using System.Text;
 
 namespace CafeteriaRecommendationSystem.Client.OptionCommand
 {
-    public class ViewNotificationCommand : ICommand
+    public class GenerateDiscardedMenuItemsCommand : ICommand
     {
         private readonly NetworkStream _stream;
-        private readonly int _userId;
-        public ViewNotificationCommand(int userId, NetworkStream stream)
+        public GenerateDiscardedMenuItemsCommand(NetworkStream stream)
         {
-            _userId = userId;
             _stream = stream;
         }
+
         public void Execute(RoleEnum role)
         {
-            string optionRequest = $"option|{(int)role}|6|{_userId}";
+            string optionRequest = $"option|{(int)role}|6";
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
 
-            byte[] response = new byte[1024];
+            byte[] response = new byte[8192];
             int bytes = _stream.Read(response, 0, response.Length);
             string serverResponse = Encoding.ASCII.GetString(response, 0, bytes);
-            Console.WriteLine(serverResponse);
+            Console.WriteLine(serverResponse + "\n");
         }
     }
 }

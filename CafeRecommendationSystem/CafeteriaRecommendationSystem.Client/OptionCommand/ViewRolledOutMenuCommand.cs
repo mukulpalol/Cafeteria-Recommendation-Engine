@@ -17,14 +17,14 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
 
         public void Execute(RoleEnum role)
         {
-            string optionRequest = $"option|{(int)role}|6";
+            string optionRequest = $"option|{(int)role}|8";
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
 
             byte[] response = new byte[8192];
             int bytes = _stream.Read(response, 0, response.Length);
             string serverResponse = Encoding.ASCII.GetString(response, 0, bytes);
-            if (serverResponse == string.Empty)
+            if (serverResponse == "[]")
             {
                 Console.WriteLine("Menu not rolled out yet.");
             }

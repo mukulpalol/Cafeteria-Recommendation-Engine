@@ -7,12 +7,13 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
     {
         void AddMenuItem(MenuItem menuItem);
         void UpdateMenuItem(MenuItemUpdateRequestDTO menuItem);
-        void UpdateMenuItemAvailability(User user, MenuItem menuItem, int AvailabilityStatusId);
+        void UpdateMenuItemAvailability(MenuItem menuItem, int AvailabilityStatusId);
         void UpdateSentimentScoreOfMenuItem(int menuItemId);
         void DeleteMenuItem(int menuItemId);
         List<MenuItem> GetAllMenuItems();
         MenuItem GetMenuItemById(int menuItemId);
         List<MenuItem> GetAvailableMenuItems();
+        List<MenuItem> GetMenuItemsThatAreDiscarded();
         List<MenuItem> GetRolledOutMenu();
         List<MenuItem> GetFinalisedMenu();
     }

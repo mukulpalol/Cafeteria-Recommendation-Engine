@@ -51,7 +51,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
             }
         }
 
-        public void UpdateMenuItemAvailability(User user, MenuItem menuItem, int AvailabilityStatusId)
+        public void UpdateMenuItemAvailability(MenuItem menuItem, int AvailabilityStatusId)
         {
             string message = $"Availability of {menuItem.Name} changed to {(AvailabilityStatusEnum)AvailabilityStatusId}";
             _notificationService.SendNotification(NotificationTypeEnum.FoodItemAvailabilityUpdated, message);
@@ -89,6 +89,11 @@ namespace CafeteriaRecommendationSystem.Service.Services
         public List<MenuItem> GetAvailableMenuItems()
         {
             return _menuItemRepository.GetAll().Where(m => m.AvailabilityStatusId == (int)AvailabilityStatusEnum.Available).ToList();
+        }
+
+        public List<MenuItem> GetMenuItemsThatAreDiscarded()
+        {
+            return _menuItemRepository.GetAll().Where(m => m.AvailabilityStatusId == (int)AvailabilityStatusEnum.Discarded).ToList();
         }
 
         public List<MenuItem> GetRolledOutMenu()

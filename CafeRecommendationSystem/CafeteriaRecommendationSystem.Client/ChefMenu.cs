@@ -21,7 +21,10 @@ namespace CafeteriaRecommendationSystem.Client
             Console.WriteLine("3. Finalise menu for next day");
             Console.WriteLine("4. View menu");
             Console.WriteLine("5. View votes on rolled out menu items");            
-            // Console.WriteLine("6. Generate monthly report");
+            Console.WriteLine("6. Generate discarded menu items");
+            Console.WriteLine("7. View discarded menu items");
+            Console.WriteLine("8. Handle discarded menu items");
+            // Console.WriteLine("9. Generate monthly report");
             Console.WriteLine("0. Logout");
         }
 
@@ -33,7 +36,10 @@ namespace CafeteriaRecommendationSystem.Client
                 2 => new RollOutMenuCommand(_stream),
                 3 => new FinaliseMenuCommand(_stream),
                 4 => new ViewMenuCommand(_stream),
-                5 => new ViewVotesOnRolledOutMenu(_stream),                
+                5 => new ViewVotesOnRolledOutMenu(_stream),
+                6 => new GenerateDiscardedMenuItemsCommand(_stream),
+                7 => new ViewDiscardedMenuItemsCommand(_stream),
+                8 => new HandleDiscardMenuItemsCommand(_stream),
                 0 => null,
                 _ => throw new ArgumentException("Invalid option")
             };

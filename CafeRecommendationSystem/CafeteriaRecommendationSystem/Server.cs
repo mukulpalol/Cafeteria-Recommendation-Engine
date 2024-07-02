@@ -62,6 +62,8 @@ namespace CafeteriaRecommendationSystem
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IRecommendationRepository, RecommendationRepository>();
             services.AddScoped<ISelectionRepository, SelectionRepository>();
+            services.AddScoped<IDiscardedMenuItemRepository, DiscardedMenuItemRepository>();
+            services.AddScoped<IDiscardedMenuItemFeedbackRepository, DiscardedMenuItemFeedbackRepository>();
 
             services.AddScoped<IAuthService, AuthService>();            
             services.AddScoped<IFeedbackService, FeedbackService>();
@@ -69,13 +71,20 @@ namespace CafeteriaRecommendationSystem
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IRecommendationService, RecommendationService>();
             services.AddScoped<ISelectionService, SelectionService>();
+            services.AddScoped<ISentimentAnalysisHelper, SentimentAnalysisHelper>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDiscardedMenuItemService, DiscardedMenuItemService>();
 
             services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
                 loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
                 loggingBuilder.AddNLog(configuration);
+            });
+
+            services.AddSingleton(new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore                
             });
         }
 
@@ -178,7 +187,7 @@ namespace CafeteriaRecommendationSystem
             else if ((role == (int)RoleEnum.Admin || role == (int)RoleEnum.Chef || role == (int)RoleEnum.Employee) && option == "4")
             {
                 var menuItemService = serviceProvider.GetService<IMenuItemService>();
-                var menuItems = menuItemService.GetAvailableMenuItems().ToList();
+                var menuItems = menuItemService.GetAvailableMenuItems();
                 var response = JsonConvert.SerializeObject(menuItems);
                 return response;
             }
@@ -213,6 +222,11 @@ namespace CafeteriaRecommendationSystem
                 var voteResponses = selectionService.GetRolledOutMenuVotes();
                 var response = JsonConvert.SerializeObject(voteResponses);
                 return response;
+            }
+            else if (role == (int)RoleEnum.Chef && option == "6")
+            {
+                var discardedMenuItemService = serviceProvider.GetService<IDiscardedMenuItemService>();
+                return discardedMenuItemService.GenerateDiscardedMenuItem();
             }
             else if (role == (int)RoleEnum.Employee && option == "1")
             {
@@ -268,21 +282,21 @@ namespace CafeteriaRecommendationSystem
                 var result = feedbackService.SubmitFeedback(feedbackRequest);
                 return result;
             }
-            else if (role == (int)RoleEnum.Employee && option == "6")
+            else if (role == (int)RoleEnum.Employee && option == "8")
             {
                 var menuItemService = serviceProvider.GetService<IMenuItemService>();
                 var menuItems = menuItemService.GetRolledOutMenu();
                 var response = JsonConvert.SerializeObject(menuItems);
                 return response;
             }
-            else if (role == (int)RoleEnum.Employee && option == "7")
+            else if (role == (int)RoleEnum.Employee && option == "9")
             {
                 var menuItemService = serviceProvider.GetService<IMenuItemService>();
                 var menuItems = menuItemService.GetFinalisedMenu();
                 var response = JsonConvert.SerializeObject(menuItems);
                 return response;
             }
-            else if (role == (int)RoleEnum.Employee && option == "8")
+            else if (role == (int)RoleEnum.Employee && option == "6")
             {
                 var notificationService = serviceProvider.GetService<INotificationService>();
                 int userId = int.Parse(parts[3]);
@@ -299,6 +313,21 @@ namespace CafeteriaRecommendationSystem
                 {
                     response = "No notifications to display.\n";
                 }
+                return response;
+            }
+            else if ((role == (int)RoleEnum.Chef || role == (int)RoleEnum.Employee) && option == "7")
+            {
+                var menuItemService = serviceProvider.GetService<IMenuItemService>();
+                var menuItems = menuItemService.GetMenuItemsThatAreDiscarded();
+                var response = JsonConvert.SerializeObject(menuItems);
+                return response;
+            }
+            else if(role == (int)RoleEnum.Chef && option == "8")
+            {
+                var discardMenuItemService = serviceProvider.GetService<IDiscardedMenuItemService>();
+                var requestJson = parts[3];
+                HandleMenuItemRequestDTO request = JsonConvert.DeserializeObject<HandleMenuItemRequestDTO>(requestJson);
+                var response = discardMenuItemService.HandleDiscardMenuItem(request);
                 return response;
             }
             else

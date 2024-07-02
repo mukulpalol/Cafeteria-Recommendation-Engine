@@ -25,6 +25,7 @@ namespace CafeteriaRecommendationSystem.Client
 
                 while (true)
                 {
+                    Console.WriteLine();
                     menu.DisplayMenu();
                     Console.Write("\nEnter a choice: ");
                     int option = int.Parse(Console.ReadLine());
