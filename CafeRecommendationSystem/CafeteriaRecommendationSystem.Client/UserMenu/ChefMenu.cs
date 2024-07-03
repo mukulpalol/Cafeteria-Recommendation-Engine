@@ -1,7 +1,7 @@
 ﻿using CafeteriaRecommendationSystem.Client.OptionCommand;
 using System.Net.Sockets;
 
-namespace CafeteriaRecommendationSystem.Client
+namespace CafeteriaRecommendationSystem.Client.UserMenu
 {
     public class ChefMenu : IMenu
     {
@@ -20,7 +20,7 @@ namespace CafeteriaRecommendationSystem.Client
             Console.WriteLine("2. Role out menu for next day");
             Console.WriteLine("3. Finalise menu for next day");
             Console.WriteLine("4. View menu");
-            Console.WriteLine("5. View votes on rolled out menu items");            
+            Console.WriteLine("5. View votes on rolled out menu items");
             Console.WriteLine("6. Generate discarded menu items");
             Console.WriteLine("7. View discarded menu items");
             Console.WriteLine("8. Handle discarded menu items");

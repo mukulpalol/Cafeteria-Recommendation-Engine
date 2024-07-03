@@ -1,7 +1,7 @@
 ﻿using CafeteriaRecommendationSystem.Client.OptionCommand;
 using System.Net.Sockets;
 
-namespace CafeteriaRecommendationSystem.Client
+namespace CafeteriaRecommendationSystem.Client.UserMenu
 {
     public class AdminMenu : IMenu
     {

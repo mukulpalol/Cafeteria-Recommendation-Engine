@@ -1,4 +1,4 @@
-﻿namespace CafeteriaRecommendationSystem.Common.DTO
+﻿namespace CafeteriaRecommendationSystem.Common.DTO.RequestDTO
 {
     public class GetRecommendationRequestDTO
     {

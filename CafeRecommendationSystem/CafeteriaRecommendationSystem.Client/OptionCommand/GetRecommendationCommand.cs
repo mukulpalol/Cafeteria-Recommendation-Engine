@@ -1,5 +1,6 @@
 ﻿using CafeteriaRecommendationSystem.Common;
-using CafeteriaRecommendationSystem.Common.DTO;
+using CafeteriaRecommendationSystem.Common.DTO.RequestDTO;
+using CafeteriaRecommendationSystem.Common.DTO.ResponseDTO;
 using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Text;

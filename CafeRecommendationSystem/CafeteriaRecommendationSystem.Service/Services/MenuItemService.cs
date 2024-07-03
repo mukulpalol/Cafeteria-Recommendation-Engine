@@ -1,5 +1,5 @@
 ﻿using CafeteriaRecommendationSystem.Common;
-using CafeteriaRecommendationSystem.Common.DTO;
+using CafeteriaRecommendationSystem.Common.DTO.RequestDTO;
 using CafeteriaRecommendationSystem.DAL.Models;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.ServicesContract;

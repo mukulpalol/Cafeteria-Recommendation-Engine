@@ -1,4 +1,4 @@
-﻿using CafeteriaRecommendationSystem.Common.DTO;
+﻿using CafeteriaRecommendationSystem.Common.DTO.RequestDTO;
 using CafeteriaRecommendationSystem.DAL.Models;
 
 namespace CafeteriaRecommendationSystem.Service.ServicesContract
