@@ -1,6 +1,5 @@
 ﻿using CafeteriaRecommendationSystem.Common;
 using CafeteriaRecommendationSystem.Common.DTO;
-using CafeteriaRecommendationSystem.DAL.Models;
 using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Text;
@@ -23,16 +22,21 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
             request.UserId = _userId;
             Console.Write("Enter discarded menu item's id: ");
             request.MenuItemId = int.Parse(Console.ReadLine());
-            request.Feedback += "What didn't you like about the food item?\n";
-            Console.WriteLine("What didn't you like about the food item?");
-            string feedback = Console.ReadLine();
-            request.Feedback += feedback + "\nHow would you like the food item to taste?\n";
-            Console.WriteLine("How would you like the food item to taste?");
-            feedback = Console.ReadLine();
-            request.Feedback += feedback + "\nShare your recipe:\n";
-            Console.WriteLine("Share your recipe:");
-            feedback = Console.ReadLine();
-            request.Feedback += feedback + "\n";
+            StringBuilder feedback = new StringBuilder();
+            string[] questions = {
+                "What didn't you like about the food item?",
+                "How would you like the food item to taste?",
+                "Share your recipe:"
+            };
+
+            foreach (string question in questions)
+            {
+                Console.WriteLine(question);
+                feedback.AppendLine(question);
+                feedback.AppendLine(Console.ReadLine());
+            }
+            
+            request.Feedback = feedback.ToString();
 
             string selectionJson = JsonConvert.SerializeObject(request);
             string optionRequest = $"option|{(int)role}|10|{selectionJson}";

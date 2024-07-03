@@ -15,6 +15,8 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
         List<MenuItem> GetAvailableMenuItems();
         List<MenuItem> GetMenuItemsThatAreDiscarded();
         List<MenuItem> GetRolledOutMenu();
+        List<MenuItem> GetRolledOutMenu(int userId);
         List<MenuItem> GetFinalisedMenu();
+        List<Characteristic> GetAllFoodCharacteristic();
     }
 }

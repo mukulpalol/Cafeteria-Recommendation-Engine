@@ -129,7 +129,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
 
         public Recommendation GetRecommendationByMenuItem(int menuItemId)
         {
-            var recommendation = _recommendationRepository.GetAll().Where(e => e.MenuItemId == menuItemId && e.RecommendationDate == DateTime.UtcNow).FirstOrDefault();
+            var recommendation = _recommendationRepository.GetAll().Where(e => e.MenuItemId == menuItemId && e.RecommendationDate == DateTime.Today).FirstOrDefault();
             return recommendation;
         }
 

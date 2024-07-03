@@ -7,10 +7,14 @@ namespace CafeteriaRecommendationSystem.Service.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ICharacteristicRepository _characteristicRepository;
+        private readonly IUserPreferenceRepository _userPreferenceRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, ICharacteristicRepository characteristicRepository, IUserPreferenceRepository userPreferenceRepository)
         {
             _userRepository = userRepository;
+            _characteristicRepository = characteristicRepository;
+            _userPreferenceRepository = userPreferenceRepository;
         }
 
         public void AddUser(User user)
@@ -36,6 +40,56 @@ namespace CafeteriaRecommendationSystem.Service.Services
         public User GetUserById(int userId)
         {
             return _userRepository.GetById(userId);
+        }
+
+        public List<Characteristic> GetUserPreferences(int userId)
+        {
+            var user = _userRepository.GetById(userId);
+            var preferenceIds = _userPreferenceRepository.GetAll().Where(e=>e.UserId == userId).Select(c=>c.CharacteristicId).ToList();
+            List<Characteristic> preferences = new List<Characteristic>();
+            foreach(var preferenceId in preferenceIds)
+            {
+                Characteristic preference = _characteristicRepository.GetById(preferenceId);
+                preferences.Add(preference);
+            }
+            return preferences;
+        }
+
+        public string AddUserPreference(int userId, int characteristicId)
+        {
+            var user = _userRepository.GetById(userId);
+            var characteristic = _characteristicRepository.GetById(characteristicId);
+            if (characteristic == null)
+            {
+                return "Invalid characteristic id";
+            }
+            var userPreferenceExist = _userPreferenceRepository.GetAll().Where(u => u.UserId == userId && u.CharacteristicId == characteristicId).Any();
+            if (!userPreferenceExist)
+            {
+                UserPreference userPreference = new UserPreference()
+                {
+                    UserId = userId,
+                    CharacteristicId = characteristicId
+                };
+                _userPreferenceRepository.Add(userPreference);
+            }
+            return "Preference added successfully";
+        }
+
+        public string DeleteUserPreference(int userId, int characteristicId)
+        {
+            var user = _userRepository.GetById(userId);
+            var characteristic = _characteristicRepository.GetById(characteristicId);
+            if (characteristic == null)
+            {
+                return "Invalid characteristic id";
+            }
+            var userPreference = _userPreferenceRepository.GetAll().Where(u => u.UserId == userId && u.CharacteristicId == characteristicId).FirstOrDefault();
+            if(userPreference != null)
+            {
+                _userPreferenceRepository.Delete(userPreference.Id);
+            }
+            return "Preference deleted successfully";
         }
     }
 }

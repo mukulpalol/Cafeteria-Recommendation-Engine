@@ -10,14 +10,16 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
     internal class ViewRolledOutMenuCommand : ICommand
     {
         private readonly NetworkStream _stream;
-        public ViewRolledOutMenuCommand(NetworkStream stream)
+        private readonly int _userId;
+        public ViewRolledOutMenuCommand(int userId, NetworkStream stream)
         {
             _stream = stream;
+            _userId = userId;
         }
 
         public void Execute(RoleEnum role)
         {
-            string optionRequest = $"option|{(int)role}|8";
+            string optionRequest = $"option|{(int)role}|8|{_userId}";
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
 

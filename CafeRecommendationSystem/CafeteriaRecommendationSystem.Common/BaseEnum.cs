@@ -36,4 +36,17 @@
         MenuFinalised = 6,
         MenuItemDiscarded = 7
     }
+
+    public enum CharacteristicEnum
+    {
+        Vegetarian = 1,
+        NonVegetarian = 2,
+        Eggetarian = 3,
+        Spicy = 4,
+        Sweet = 5,
+        NorthIndian = 6,
+        SouthIndian = 7,
+        FastFood = 8,
+        Dairy = 9
+    }
 }

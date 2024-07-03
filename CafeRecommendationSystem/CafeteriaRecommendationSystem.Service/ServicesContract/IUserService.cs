@@ -9,5 +9,8 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
         void DeleteUser(int userId);
         IEnumerable<User> GetAllUsers();
         User GetUserById(int userId);
+        List<Characteristic> GetUserPreferences(int userId);
+        string AddUserPreference(int userId, int characteristicId);
+        string DeleteUserPreference(int userId, int characteristicId);
     }
 }

@@ -11,16 +11,22 @@ namespace CafeteriaRecommendationSystem.Service.Services
         private readonly IMenuItemRepository _menuItemRepository;
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IRecommendationRepository _recommendationRepository;
+        private readonly ICharacteristicRepository _characteristicRepository;
+        private readonly IUserPreferenceRepository _userPreferenceRepository;
+        private readonly IMenuItemCharacteristicRpository _menuItemCharacteristicRpository;
         private readonly INotificationService _notificationService;
         private readonly ISentimentAnalysisHelper _sentimentAnalysisHelper;
 
-        public MenuItemService(IMenuItemRepository menuItemRepository, IFeedbackRepository feedbackRepository, IRecommendationRepository recommendationRepository, INotificationService notificationService, ISentimentAnalysisHelper sentimentAnalysisHelper)
+        public MenuItemService(IMenuItemRepository menuItemRepository, IFeedbackRepository feedbackRepository, IRecommendationRepository recommendationRepository, ICharacteristicRepository characteristicRepository, INotificationService notificationService, ISentimentAnalysisHelper sentimentAnalysisHelper, IUserPreferenceRepository userPreferenceRepository, IMenuItemCharacteristicRpository menuItemCharacteristicRpository)
         {
             _menuItemRepository = menuItemRepository;
             _feedbackRepository = feedbackRepository;
             _recommendationRepository = recommendationRepository;
+            _characteristicRepository = characteristicRepository;
             _notificationService = notificationService;
             _sentimentAnalysisHelper = sentimentAnalysisHelper;
+            _userPreferenceRepository = userPreferenceRepository;
+            _menuItemCharacteristicRpository = menuItemCharacteristicRpository;
         }
 
         public void AddMenuItem(MenuItem menuItem)
@@ -64,7 +70,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
         public void UpdateSentimentScoreOfMenuItem(int menuItemId)
         {
             var comments = _feedbackRepository.GetAll().Where(f => f.MenuItemId == menuItemId).Select(c => c.Comment).ToList();
-            var sentimentScore = _sentimentAnalysisHelper.CalculateCommentSentimentScore(comments);            
+            var sentimentScore = _sentimentAnalysisHelper.CalculateCommentSentimentScore(comments);
             var menuItem = _menuItemRepository.GetById(menuItemId);
             menuItem.SentimentScore = sentimentScore;
             _menuItemRepository.Update(menuItem);
@@ -102,7 +108,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
         public List<MenuItem> GetRolledOutMenu()
         {
             var menuItemIdsWithRecommendationToday = _recommendationRepository.GetAll()
-                .Where(r => r.RecommendationDate.Date == DateTime.UtcNow)
+                .Where(r => r.RecommendationDate.Date == DateTime.Today)
                 .Select(r => r.MenuItemId)
                 .ToList();
             List<MenuItem> rolledOutMenu = new List<MenuItem>();
@@ -113,10 +119,38 @@ namespace CafeteriaRecommendationSystem.Service.Services
             return rolledOutMenu;
         }
 
+        public List<MenuItem> GetRolledOutMenu(int userId)
+        {
+            var rolledOutMenu = GetRolledOutMenu();
+            var userPreferences = _userPreferenceRepository.GetAll().Where(up => up.UserId == userId)
+                                              .Select(up => up.CharacteristicId)
+                                              .ToHashSet();
+            if (userPreferences.Count == 0)
+            {
+                return rolledOutMenu;
+            }
+            var menuItemsWithCharacteristics = rolledOutMenu.Select(menuItem => new
+            {
+                MenuItem = menuItem,
+                Characteristics = _menuItemCharacteristicRpository.GetAll().Where(mic => mic.MenuItemId == menuItem.Id)
+                                                      .Select(mic => mic.CharacteristicId)
+                                                      .ToList()
+            }).ToList();
+            var sortedMenuItems = menuItemsWithCharacteristics.OrderByDescending(item => item.Characteristics
+                                                        .Count(c => userPreferences.Contains(c)))
+                                                        .ThenBy(item => item.Characteristics.Count > 0 ? 0 : 1)
+                                                        .ThenBy(item => item.MenuItem.Id)
+                                                        .Select(item => item.MenuItem)
+                                                        .ToList();
+
+            return sortedMenuItems;
+
+        }
+
         public List<MenuItem> GetFinalisedMenu()
         {
             var menuItemIdsWithRecommendationToday = _recommendationRepository.GetAll()
-                .Where(r => r.RecommendationDate.Date == DateTime.UtcNow && r.IsFinalised == true)
+                .Where(r => r.RecommendationDate.Date.Date == DateTime.Today.Date && r.IsFinalised == true)
                 .Select(r => r.MenuItemId)
                 .ToList();
             List<MenuItem> finalisedMenu = new List<MenuItem>();
@@ -125,6 +159,12 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 finalisedMenu.Add(_menuItemRepository.GetById(menuItemId));
             }
             return finalisedMenu;
+        }
+
+        public List<Characteristic> GetAllFoodCharacteristic()
+        {
+            var characteristics = _characteristicRepository.GetAll().ToList();
+            return characteristics;
         }
     }
 }
