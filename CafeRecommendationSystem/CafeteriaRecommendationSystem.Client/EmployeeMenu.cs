@@ -25,6 +25,7 @@ namespace CafeteriaRecommendationSystem.Client
             Console.WriteLine("8. View rolled out menu");
             Console.WriteLine("9. View finalized menu for tomorrow");
             Console.WriteLine("10. Give feedback on discarded menu item");
+            Console.WriteLine("11. Update your food preferences");
             Console.WriteLine("0. Logout");
         }
 

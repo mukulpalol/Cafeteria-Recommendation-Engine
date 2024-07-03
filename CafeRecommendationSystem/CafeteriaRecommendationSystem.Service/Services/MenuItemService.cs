@@ -12,13 +12,15 @@ namespace CafeteriaRecommendationSystem.Service.Services
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IRecommendationRepository _recommendationRepository;
         private readonly INotificationService _notificationService;
+        private readonly ISentimentAnalysisHelper _sentimentAnalysisHelper;
 
-        public MenuItemService(IMenuItemRepository menuItemRepository, IFeedbackRepository feedbackRepository, IRecommendationRepository recommendationRepository, INotificationService notificationService)
+        public MenuItemService(IMenuItemRepository menuItemRepository, IFeedbackRepository feedbackRepository, IRecommendationRepository recommendationRepository, INotificationService notificationService, ISentimentAnalysisHelper sentimentAnalysisHelper)
         {
             _menuItemRepository = menuItemRepository;
             _feedbackRepository = feedbackRepository;
             _recommendationRepository = recommendationRepository;
             _notificationService = notificationService;
+            _sentimentAnalysisHelper = sentimentAnalysisHelper;
         }
 
         public void AddMenuItem(MenuItem menuItem)
@@ -61,9 +63,10 @@ namespace CafeteriaRecommendationSystem.Service.Services
 
         public void UpdateSentimentScoreOfMenuItem(int menuItemId)
         {
-            var sentimentScore = _feedbackRepository.GetAll().Where(f => f.MenuItemId == menuItemId).Average(f => f.SentimentScore);
+            var comments = _feedbackRepository.GetAll().Where(f => f.MenuItemId == menuItemId).Select(c => c.Comment).ToList();
+            var sentimentScore = _sentimentAnalysisHelper.CalculateCommentSentimentScore(comments);            
             var menuItem = _menuItemRepository.GetById(menuItemId);
-            menuItem.SentimentScore = (decimal)sentimentScore;
+            menuItem.SentimentScore = sentimentScore;
             _menuItemRepository.Update(menuItem);
         }
 

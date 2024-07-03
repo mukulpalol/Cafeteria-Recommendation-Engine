@@ -13,5 +13,6 @@
         public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
         public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         public virtual ICollection<Selection> Selections { get; set; } = new List<Selection>();
+        public virtual ICollection<UserPreference> UserPreferences { get; set; } = new List<UserPreference>();
     }
 }

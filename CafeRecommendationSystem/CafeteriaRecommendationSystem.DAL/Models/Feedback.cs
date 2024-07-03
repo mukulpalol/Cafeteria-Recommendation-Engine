@@ -9,7 +9,7 @@
         public virtual MenuItem MenuItem { get; set; } = null;
         public int Rating { get; set; }
         public string? Comment { get; set; }
-        public int SentimentScore { get; set; }
+        public int SentimentScore { get; set; } = 5;
         public DateTime Date { get; set; }
     }
 }

@@ -330,6 +330,14 @@ namespace CafeteriaRecommendationSystem
                 var response = discardMenuItemService.HandleDiscardMenuItem(request);
                 return response;
             }
+            else if(role == (int)RoleEnum.Employee && option == "10")
+            {
+                var feedbackService = serviceProvider.GetService<IFeedbackService>();
+                var requestJson = parts[3];
+                DiscardedMenuItemFeedbackRequestDTO request = JsonConvert.DeserializeObject<DiscardedMenuItemFeedbackRequestDTO>(requestJson);
+                var response = feedbackService.SubmiteFeedbackOfDiscardedMenuItm(request);
+                return response;
+            }
             else
             {
                 // Handle other options based on the role

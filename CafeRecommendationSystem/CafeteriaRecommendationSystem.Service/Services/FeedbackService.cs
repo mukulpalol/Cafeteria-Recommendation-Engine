@@ -1,4 +1,5 @@
-﻿using CafeteriaRecommendationSystem.Common.DTO;
+﻿using CafeteriaRecommendationSystem.Common;
+using CafeteriaRecommendationSystem.Common.DTO;
 using CafeteriaRecommendationSystem.DAL.Models;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
@@ -9,13 +10,15 @@ namespace CafeteriaRecommendationSystem.Service.Services
     {
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IMenuItemService _menuItemService;
+        private readonly IDiscardedMenuItemFeedbackRepository _discardedMenuItemFeedbackRepository;
         private readonly IRecommendationService _recommendationService;
 
-        public FeedbackService(IFeedbackRepository feedbackRepository, IMenuItemService menuItemService, IRecommendationService recommendationService)
+        public FeedbackService(IFeedbackRepository feedbackRepository, IMenuItemService menuItemService, IDiscardedMenuItemFeedbackRepository discardedMenuItemFeedbackRepository, IRecommendationService recommendationService)
         {
             _feedbackRepository = feedbackRepository;
             _menuItemService = menuItemService;
-            _recommendationService = recommendationService;
+            _discardedMenuItemFeedbackRepository = discardedMenuItemFeedbackRepository;
+            _recommendationService = recommendationService;            
         }
 
         public string SubmitFeedback(FeedbackRequestDTO feedbackRequest)
@@ -24,8 +27,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
             feedback.MenuItemId = feedbackRequest.MenuItemId;
             feedback.UserId = feedbackRequest.UserId;
             feedback.Rating = feedbackRequest.Rating;
-            feedback.Comment = feedbackRequest.Comment;
-            feedback.SentimentScore = 0; //to update with sentiment analyser function
+            feedback.Comment = feedbackRequest.Comment;            
 
             if (!_recommendationService.CheckMenuItemWasFinalised(feedback.MenuItemId))
             {
@@ -38,6 +40,27 @@ namespace CafeteriaRecommendationSystem.Service.Services
             _feedbackRepository.Add(feedback);
             _menuItemService.UpdateSentimentScoreOfMenuItem(feedback.MenuItemId);
             return "Feedback submitted successfully";
+        }
+
+        public string SubmiteFeedbackOfDiscardedMenuItm(DiscardedMenuItemFeedbackRequestDTO discardedMenuItemFeedbackRequest)
+        {
+            var menuItem = _menuItemService.GetMenuItemById(discardedMenuItemFeedbackRequest.MenuItemId);
+            if (menuItem != null)
+            {
+                if (menuItem.AvailabilityStatusId == (int)AvailabilityStatusEnum.Discarded)
+                {
+                    DiscardedMenuItemFeedback itemFeedback = new DiscardedMenuItemFeedback();
+                    itemFeedback.DiscardedMenuItemId = discardedMenuItemFeedbackRequest.MenuItemId;
+                    itemFeedback.UserId = discardedMenuItemFeedbackRequest.UserId;
+                    itemFeedback.Feedback = discardedMenuItemFeedbackRequest.Feedback;
+                    itemFeedback.Date = DateTime.UtcNow;
+                    _discardedMenuItemFeedbackRepository.Add(itemFeedback);
+
+                    return "Feedback submitted successfullly";
+                }
+                return "Menu item is not in discarded list";
+            }
+            return "Invalid menu item id entered";
         }
 
         bool CheckFeedbackAlreadySubmitted(Feedback feedback)

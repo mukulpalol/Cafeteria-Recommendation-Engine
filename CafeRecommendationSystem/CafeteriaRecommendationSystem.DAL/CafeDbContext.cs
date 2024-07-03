@@ -7,10 +7,12 @@ namespace CafeteriaRecommendationSystem.DAL
     public class CafeDbContext : DbContext
     {
         public DbSet<AvailabilityStatus> AvailabilityStatuses { get; set; }
+        public DbSet<Characteristic> Characteristics { get; set; }
         public DbSet<DiscardedMenuItem> DiscardedMenuItems { get; set; }
         public DbSet<DiscardedMenuItemFeedback> DiscardedMenuItemFeedbacks { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<MenuItemCharacteristic> MenuItemCharacteristics { get; set; }
         public virtual DbSet<MenuItemType> MenuItemTypes { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<NotificationType> NotificationTypes { get; set; }
@@ -18,6 +20,7 @@ namespace CafeteriaRecommendationSystem.DAL
         public DbSet<Role> Roles { get; set; }
         public virtual DbSet<Selection> Selections { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserPreference> UserPreferences { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlServer(AppConstants.ConnectionString);
@@ -30,6 +33,16 @@ namespace CafeteriaRecommendationSystem.DAL
 
                 entity.Property(e => e.Id).HasColumnName("ID");
                 entity.Property(e => e.StatusName)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Characteristic>(entity =>
+            {
+                entity.ToTable("Characteristic");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Name)
                     .HasMaxLength(30)
                     .IsUnicode(false);
             });
@@ -110,6 +123,25 @@ namespace CafeteriaRecommendationSystem.DAL
                     .HasForeignKey(d => d.TypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_MenuItems_MenuItemTypes");
+            });
+
+            modelBuilder.Entity<MenuItemCharacteristic>(entity =>
+            {
+                entity.ToTable("MenuItemCharacteristic");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.MenuItemId).HasColumnName("MenuItemID");
+                entity.Property(e => e.CharacteristicId).HasColumnName("CharacteristicID");
+
+                entity.HasOne(d => d.Characteristic).WithMany(p => p.MenuItemCharacteristics)
+                    .HasForeignKey(d => d.CharacteristicId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MenuItemCharacteristic_Characteristic");
+
+                entity.HasOne(d => d.MenuItem).WithMany(p => p.MenuItemCharacteristic)
+                    .HasForeignKey(d => d.MenuItemId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MenuItemCharacteristic_MenuItem");
             });
 
             modelBuilder.Entity<MenuItemType>(entity =>
@@ -209,6 +241,25 @@ namespace CafeteriaRecommendationSystem.DAL
                     .HasConstraintName("FK_Users_Roles");
             });
 
+            modelBuilder.Entity<UserPreference>(entity =>
+            {
+                entity.ToTable("UserPreference");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.CharacteristicId).HasColumnName("CharacteristicID");
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.Characteristic).WithMany(p => p.UserPreferences)
+                    .HasForeignKey(d => d.CharacteristicId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserPreference_Characteristic");
+
+                entity.HasOne(d => d.User).WithMany(p => p.UserPreferences)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserPreference_Users");
+            });
+
             modelBuilder.Entity<AvailabilityStatus>().HasData(
                 new AvailabilityStatus { Id = 1, StatusName = "Available" },
                 new AvailabilityStatus { Id = 2, StatusName = "Unavailable" },
@@ -216,6 +267,18 @@ namespace CafeteriaRecommendationSystem.DAL
                 new AvailabilityStatus { Id = 4, StatusName = "OutOfStock" },
                 new AvailabilityStatus { Id = 5, StatusName = "OnHold" },
                 new AvailabilityStatus { Id = 6, StatusName = "Discarded" }
+                );
+
+            modelBuilder.Entity<Characteristic>().HasData(
+                new Characteristic { Id = 1, Name = "Vegetarian" },
+                new Characteristic { Id = 2, Name = "Non-Vegetarian" },
+                new Characteristic { Id = 3, Name = "Eggetarian" },
+                new Characteristic { Id = 4, Name = "Spicy" },
+                new Characteristic { Id = 5, Name = "Sweet" },
+                new Characteristic { Id = 6, Name = "NorthIndian" },
+                new Characteristic { Id = 7, Name = "SouthIndian" },
+                new Characteristic { Id = 8, Name = "FastFood" },
+                new Characteristic { Id = 9, Name = "Dairy" }
                 );
 
             modelBuilder.Entity<Feedback>().HasData(
