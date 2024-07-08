@@ -1,5 +1,6 @@
 ﻿using CafeteriaRecommendationSystem.Common;
 using CafeteriaRecommendationSystem.Common.DTO.RequestDTO;
+using CafeteriaRecommendationSystem.Common.DTO.ResponseDTO;
 using CafeteriaRecommendationSystem.DAL.Models;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
 using Newtonsoft.Json;
@@ -63,7 +64,20 @@ namespace CafeteriaRecommendationSystem.Contollers
             {
                 var menuItemService = GetService<IMenuItemService>();
                 var menuItems = menuItemService.GetAvailableMenuItems();
-                return Helpers.SerializeObjectIgnoringCycles(menuItems);
+                List<MenuItemResponseDTO> items = new List<MenuItemResponseDTO>();
+                foreach (var menuItem in menuItems)
+                {
+                    MenuItemResponseDTO menuItemResponse = new MenuItemResponseDTO();
+                    menuItemResponse.Id = menuItem.Id;
+                    menuItemResponse.Name = menuItem.Name;
+                    menuItemResponse.Price = menuItem.Price;
+                    menuItemResponse.Type = ((MenuItemTypeEnum)menuItem.TypeId).ToString();
+                    menuItemResponse.Availability = ((AvailabilityStatusEnum)menuItem.AvailabilityStatusId).ToString();
+                    menuItemResponse.GeneralSentiment = menuItem.GeneralSentiment;
+                    menuItemResponse.SentimentScore = menuItem.SentimentScore;
+                    items.Add(menuItemResponse);
+                }
+                return JsonConvert.SerializeObject(items);
             }
             catch (Exception ex)
             {

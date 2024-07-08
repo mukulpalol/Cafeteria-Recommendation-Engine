@@ -57,7 +57,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 {
                     MenuItemId = menuItem.Id,
                     MenuItem = menuItem,
-                    CreatedDate = DateTime.UtcNow
+                    CreatedDate = DateTime.Today
                 };
                 _discardedMenuItemRepository.Add(discardedMenuItem);
                 _menuItemService.UpdateMenuItemAvailability(menuItem, (int)AvailabilityStatusEnum.Discarded);
@@ -72,7 +72,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
             var discardedItem = _discardedMenuItemRepository.GetAll().OrderByDescending(item => item.CreatedDate).FirstOrDefault();
             if (discardedItem != null)
             {
-                return (DateTime.UtcNow - discardedItem.CreatedDate).TotalDays < 30;
+                return (DateTime.Today - discardedItem.CreatedDate).TotalDays < 30;
             }
             return false;
         }

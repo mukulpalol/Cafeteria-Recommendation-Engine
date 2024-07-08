@@ -27,17 +27,17 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
             Console.Write("Enter comment: ");
             feedback.Comment = Console.ReadLine();
             feedback.UserId = _userId;
-            feedback.Date = DateTime.Now;
+            feedback.Date = DateTime.Today;
 
             string feedbackJson = JsonConvert.SerializeObject(feedback);
             string optionRequest = $"option|{(int)role}|5|{feedbackJson}";
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
 
-            byte[] response = new byte[1024];
+            byte[] response = new byte[8192];
             int bytes = _stream.Read(response, 0, response.Length);
             string serverResponse = Encoding.ASCII.GetString(response, 0, bytes);
-            Console.WriteLine("\nServer response: " + serverResponse);
+            Console.WriteLine($"\nServer response: {serverResponse}\n");
 
         }
     }

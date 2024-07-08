@@ -18,7 +18,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
             _feedbackRepository = feedbackRepository;
             _menuItemService = menuItemService;
             _discardedMenuItemFeedbackRepository = discardedMenuItemFeedbackRepository;
-            _recommendationService = recommendationService;            
+            _recommendationService = recommendationService;
         }
 
         public string SubmitFeedback(FeedbackRequestDTO feedbackRequest)
@@ -27,7 +27,8 @@ namespace CafeteriaRecommendationSystem.Service.Services
             feedback.MenuItemId = feedbackRequest.MenuItemId;
             feedback.UserId = feedbackRequest.UserId;
             feedback.Rating = feedbackRequest.Rating;
-            feedback.Comment = feedbackRequest.Comment;            
+            feedback.Comment = feedbackRequest.Comment;
+            feedback.Date = feedbackRequest.Date;
 
             if (!_recommendationService.CheckMenuItemWasFinalised(feedback.MenuItemId))
             {
@@ -53,7 +54,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                     itemFeedback.DiscardedMenuItemId = discardedMenuItemFeedbackRequest.MenuItemId;
                     itemFeedback.UserId = discardedMenuItemFeedbackRequest.UserId;
                     itemFeedback.Feedback = discardedMenuItemFeedbackRequest.Feedback;
-                    itemFeedback.Date = DateTime.UtcNow;
+                    itemFeedback.Date = DateTime.Today;
                     _discardedMenuItemFeedbackRepository.Add(itemFeedback);
 
                     return "Feedback submitted successfullly";

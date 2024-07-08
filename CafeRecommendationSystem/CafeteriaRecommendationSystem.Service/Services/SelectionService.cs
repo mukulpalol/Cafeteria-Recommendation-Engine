@@ -34,7 +34,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
         }
         public bool CheckSelectionExists(int userId, int menuId)
         {
-            var exisitingSelection = _selectionRepository.GetAll().Where(s => s.UserId == userId && s.MenuItemId == menuId && s.Date == DateTime.UtcNow).FirstOrDefault();
+            var exisitingSelection = _selectionRepository.GetAll().Where(s => s.UserId == userId && s.MenuItemId == menuId && s.Date.Date == DateTime.Today).FirstOrDefault();
             if (exisitingSelection == null)
             {
                 return false;

@@ -19,10 +19,10 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
 
-            byte[] response = new byte[1024];
+            byte[] response = new byte[8192];
             int bytes = _stream.Read(response, 0, response.Length);
             string serverResponse = Encoding.ASCII.GetString(response, 0, bytes);
-            Console.WriteLine(serverResponse);
+            Console.WriteLine($"\nNotifications:\n\n {serverResponse}\n");
         }
     }
 }

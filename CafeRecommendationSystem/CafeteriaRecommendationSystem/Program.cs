@@ -1,7 +1,4 @@
-﻿using CafeteriaRecommendationSystem.Common;
-using CafeteriaRecommendationSystem.Common.DTO;
-using CafeteriaRecommendationSystem.DAL;
-using CafeteriaRecommendationSystem.DAL.Models;
+﻿using CafeteriaRecommendationSystem.DAL;
 using CafeteriaRecommendationSystem.DAL.Repositories;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.Services;
@@ -9,13 +6,11 @@ using CafeteriaRecommendationSystem.Service.ServicesContract;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NLog;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection.PortableExecutable;
 using System.Text;
 
 namespace CafeteriaRecommendationSystem
@@ -106,7 +101,7 @@ namespace CafeteriaRecommendationSystem
         private static void HandleClient(TcpClient client, Logger logger)
         {
             NetworkStream stream = client.GetStream();
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[8192];
             int bytesRead;
 
             while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) != 0)
@@ -120,5 +115,5 @@ namespace CafeteriaRecommendationSystem
             logger.Info($"Client {client.Client.RemoteEndPoint} disconnected");
             client.Close();
         }
-    }   
+    }
 }

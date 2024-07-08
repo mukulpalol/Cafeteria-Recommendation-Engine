@@ -27,7 +27,7 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
             byte[] response = new byte[8192];
             int bytes = _stream.Read(response, 0, response.Length);
             string serverResponse = Encoding.ASCII.GetString(response, 0, bytes);
-            Console.WriteLine("\nServer response: " + serverResponse);
+            Console.WriteLine($"\nServer response: {serverResponse}\n");
         }
     }
 }

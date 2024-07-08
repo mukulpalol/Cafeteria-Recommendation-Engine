@@ -25,17 +25,17 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
             Console.Write("Enter menu item id:");
             selectionRequest.MenuItemId = int.Parse(Console.ReadLine());
             selectionRequest.UserId = _userId;
-            selectionRequest.Date = DateTime.UtcNow;
+            selectionRequest.Date = DateTime.Today;
 
             string selectionJson = JsonConvert.SerializeObject(selectionRequest);
             string optionRequest = $"option|{(int)role}|1|{selectionJson}|{mealType.ToString()}";
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
 
-            byte[] response = new byte[1024];
+            byte[] response = new byte[8192];
             int bytes = _stream.Read(response, 0, response.Length);
             string serverResponse = Encoding.ASCII.GetString(response, 0, bytes);
-            Console.WriteLine("\nServer response: " + serverResponse);
+            Console.WriteLine($"\nServer response: {serverResponse}\n");
         }
     }
 }

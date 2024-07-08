@@ -6,10 +6,9 @@ namespace CafeteriaRecommendationSystem.Service.Services
     {
         public decimal CalculateCommentSentimentScore(List<string> comments)
         {
-            decimal maxSentimentScore = 10;
-            decimal totalSentimentScore = 0;
-
             if (comments.Count == 0) return 0;
+
+            decimal totalSentimentScore = 0;
 
             foreach (var comment in comments)
             {
@@ -18,20 +17,19 @@ namespace CafeteriaRecommendationSystem.Service.Services
             }
 
             decimal averageSentimentScore = totalSentimentScore / comments.Count;
-            decimal normalizedCommentScore = (Math.Min(averageSentimentScore, maxSentimentScore) / maxSentimentScore) * 5.0M;
-
-            return normalizedCommentScore;
+            
+            decimal normalizedScore = (averageSentimentScore + 10) / 2;
+            return Math.Clamp(normalizedScore, 0, 10);
         }
+
         private decimal AnalyzeCommentSentiment(string comment)
         {
-            var positiveWords = GetPositiveWords();
-            var negativeWords = GetNegativeWords();
+            var wordScores = GetWordScores();
 
             comment = comment.ToLower();
             var words = comment.Split(new[] { ' ', '.', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            int positiveScore = 0;
-            int negativeScore = 0;
+            decimal sentimentScore = 0M;
             bool negate = false;
 
             foreach (var word in words)
@@ -42,56 +40,76 @@ namespace CafeteriaRecommendationSystem.Service.Services
                     continue;
                 }
 
-                if (positiveWords.Contains(word))
+                if (wordScores.ContainsKey(word))
                 {
-                    positiveScore += negate ? -1 : 1;
-                }
-                else if (negativeWords.Contains(word))
-                {
-                    negativeScore += negate ? -1 : 1;
+                    sentimentScore += negate ? -wordScores[word] : wordScores[word];
                 }
                 negate = false;
             }
 
-            if (positiveScore > negativeScore)
-            {
-                return 1.0M;
-            }
-            else if (negativeScore > positiveScore)
-            {
-                return -1.0M;
-            }
-            else
-            {
-                return 0.5M;
-            }
+            return sentimentScore;
         }
 
-        private List<string> GetPositiveWords()
+        private Dictionary<string, decimal> GetWordScores()
         {
-            var positiveWords = new List<string>
-            {
-            "delicious", "tasty", "yummy", "flavorful", "satisfying", "exquisite",
-            "mouth-watering", "savory", "delectable", "succulent", "fresh", "crispy",
-            "juicy", "perfect", "amazing", "wonderful", "excellent", "great",
-            "fantastic", "superb", "awesome", "outstanding", "appetizing", "heavenly",
-            "good", "very good","enjoyable", "yum"
+            return new Dictionary<string, decimal>
+            {       
+                { "delicious", 2 },
+                { "tasty", 2 },
+                { "yummy", 2 },
+                { "flavorful", 1.5M },
+                { "satisfying", 1.5M },
+                { "exquisite", 2 },
+                { "mouth-watering", 2 },
+                { "savory", 1.5M },
+                { "delectable", 2 },
+                { "succulent", 1.5M },
+                { "fresh", 1 },
+                { "crispy", 1 },
+                { "juicy", 1 },
+                { "perfect", 2 },
+                { "amazing", 2 },
+                { "wonderful", 2 },
+                { "excellent", 2 },
+                { "great", 1.5M },
+                { "fantastic", 2 },
+                { "superb", 2 },
+                { "awesome", 2 },
+                { "outstanding", 2 },
+                { "appetizing", 1.5M },
+                { "heavenly", 2 },
+                { "good", 1 },
+                { "very good", 1.5M },
+                { "enjoyable", 1.5M },
+                { "yum", 1.5M },
+        
+                { "bland", -1 },
+                { "tasteless", -2 },
+                { "flavorless", -2 },
+                { "bad", -1 },
+                { "very bad", -1.5M },
+                { "terrible", -2 },
+                { "awful", -2 },
+                { "disgusting", -2 },
+                { "stale", -2 },
+                { "cold", -1 },
+                { "overcooked", -1.5M },
+                { "undercooked", -1.5M },
+                { "burnt", -2 },
+                { "soggy", -1.5M },
+                { "greasy", -1.5M },
+                { "unappetizing", -2 },
+                { "horrible", -2 },
+                { "nasty", -2 },
+                { "inedible", -2 },
+                { "gross", -2 },
+                { "displeasing", -1.5M },
+                { "unpalatable", -2 },
+                { "poor", -1 },
+                { "unsatisfactory", -1.5M },
+                { "unpleasant", -1.5M },
+                { "mediocre", -1 }
             };
-
-            return positiveWords;
-        }
-
-        private List<string> GetNegativeWords()
-        {
-            var negativeWords = new List<string>
-            {
-            "bland", "tasteless", "flavorless", "bad", "very bad","terrible", "awful", "disgusting",
-            "stale", "cold", "overcooked", "undercooked", "burnt", "soggy", "greasy",
-            "unappetizing", "horrible", "nasty", "inedible", "gross", "displeasing",
-            "unpalatable", "poor", "unsatisfactory", "unpleasant", "mediocre"
-            };
-
-            return negativeWords;
         }
     }
 }

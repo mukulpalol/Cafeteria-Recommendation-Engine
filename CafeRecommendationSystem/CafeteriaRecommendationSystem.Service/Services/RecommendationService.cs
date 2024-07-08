@@ -90,11 +90,11 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 {
                     MenuItemId = menuItemId,
                     MenuItem = menuItem,
-                    RecommendationDate = DateTime.UtcNow,
+                    RecommendationDate = DateTime.Today,
                     IsFinalised = false
                 };
                 AddRecommendation(recommendation);
-                string message = $"Rolled out menu for {DateTime.UtcNow.AddDays(1).ToString("dd-MM-yyyy")}";
+                string message = $"Rolled out menu for {DateTime.Today.AddDays(1).ToString("dd-MM-yyyy")}";
                 _notificationService.SendNotification(NotificationTypeEnum.MenuRolledOut, message);
             }
         }
@@ -118,7 +118,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                     UpdateRecommendation(recommendation);
                 }
             }
-            string message = $"Menu finalised for {DateTime.UtcNow.AddDays(1).ToString("dd-MM-yyyy")}";
+            string message = $"Menu finalised for {DateTime.Today.AddDays(1).ToString("dd-MM-yyyy")}";
             _notificationService.SendNotification(NotificationTypeEnum.MenuRolledOut, message);
             return "Menu finalised";
         }
@@ -135,7 +135,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
 
         public bool CheckMenuItemWasFinalised(int menuItemId)
         {
-            var menuItemFinalizationStatus = _recommendationRepository.GetAll().Any(s => s.MenuItemId == menuItemId && s.RecommendationDate == DateTime.UtcNow.AddDays(-1) && s.IsFinalised == true);
+            var menuItemFinalizationStatus = _recommendationRepository.GetAll().Any(s => s.MenuItemId == menuItemId && s.RecommendationDate == DateTime.Today.AddDays(-1) && s.IsFinalised == true);
             return menuItemFinalizationStatus;
         }
     }
