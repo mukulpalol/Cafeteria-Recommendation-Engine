@@ -160,87 +160,153 @@ namespace CafeteriaRecommendationSystem.Service.Services
         }
         #endregion
 
+        #region GetMenuItemById
         public MenuItem GetMenuItemById(int menuItemId)
         {
-            return _menuItemRepository.GetById(menuItemId);
+            try
+            {
+                _logger.LogInformation("GetMenuItemById called");
+                return _menuItemRepository.GetById(menuItemId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetMenuItemById: {ex.Message}");
+                throw new Exception(ex.Message);
+            }
         }
+        #endregion
 
+        #region GetAvailableMenuItems
         public List<MenuItemResponseDTO> GetAvailableMenuItems()
         {
-            var menuItem = _menuItemRepository.GetAll().Where(m => m.AvailabilityStatusId == (int)AvailabilityStatusEnum.Available).ToList();
-            List<MenuItemResponseDTO> menuItems = new List<MenuItemResponseDTO>();
-            foreach (var item in menuItem)
+            try
             {
-                MenuItemResponseDTO respponse = _mapper.Map<MenuItemResponseDTO>(item);
-                menuItems.Add(respponse);
+                _logger.LogInformation("GetAvailableMenuItems called");
+                var menuItem = _menuItemRepository.GetAll().Where(m => m.AvailabilityStatusId == (int)AvailabilityStatusEnum.Available).ToList();
+                List<MenuItemResponseDTO> menuItems = new List<MenuItemResponseDTO>();
+                foreach (var item in menuItem)
+                {
+                    MenuItemResponseDTO respponse = _mapper.Map<MenuItemResponseDTO>(item);
+                    menuItems.Add(respponse);
+                }
+                return menuItems;
             }
-            return menuItems;
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetAvailableMenuItems: {ex.Message}");
+                throw new Exception(ex.Message);
+            }
         }
+        #endregion
 
+        #region GetMenuItemsThatAreDiscarded
         public List<MenuItemResponseDTO> GetMenuItemsThatAreDiscarded()
         {
-            var discardeMenuItems = _menuItemRepository.GetAll().Where(m => m.AvailabilityStatusId == (int)AvailabilityStatusEnum.Discarded).ToList();
-            List<MenuItemResponseDTO> menuItems = new List<MenuItemResponseDTO>();
-            foreach (var item in discardeMenuItems)
+            try
             {
-                MenuItemResponseDTO respponse = _mapper.Map<MenuItemResponseDTO>(item);
-                menuItems.Add(respponse);
+                _logger.LogInformation("GetMenuItemsThatAreDiscarded called");
+                var discardeMenuItems = _menuItemRepository.GetAll().Where(m => m.AvailabilityStatusId == (int)AvailabilityStatusEnum.Discarded).ToList();
+                List<MenuItemResponseDTO> menuItems = new List<MenuItemResponseDTO>();
+                foreach (var item in discardeMenuItems)
+                {
+                    MenuItemResponseDTO respponse = _mapper.Map<MenuItemResponseDTO>(item);
+                    menuItems.Add(respponse);
+                }
+                return menuItems;
             }
-            return menuItems;
-        }        
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetMenuItemsThatAreDiscarded: {ex.Message}");
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
 
+        #region GetRolledOutMenu
         public List<MenuItemResponseDTO> GetRolledOutMenu(int userId)
         {
-            List<MenuItemResponseDTO> items = new List<MenuItemResponseDTO>();
-            var menuItemIdsWithRecommendationToday = _recommendationRepository.GetAll()
-                .Where(r => r.RecommendationDate.Date == DateTime.Today)
-                .Select(r => r.MenuItemId)
-                .ToList();
-            var userPreferences = _userPreferenceRepository.GetAll().Where(up => up.UserId == userId)
-                                              .Select(up => up.CharacteristicId)
-                                              .ToHashSet();
-            foreach (var menuItemId in menuItemIdsWithRecommendationToday)
+            try
             {
-                items.Add(_mapper.Map<MenuItemResponseDTO>(_menuItemRepository.GetById(menuItemId)));
+                _logger.LogInformation("GetRolledOutMenu called");
+                List<MenuItemResponseDTO> items = new List<MenuItemResponseDTO>();
+                var menuItemIdsWithRecommendationToday = _recommendationRepository.GetAll()
+                    .Where(r => r.RecommendationDate.Date == DateTime.Today)
+                    .Select(r => r.MenuItemId)
+                    .ToList();
+                var userPreferences = _userPreferenceRepository.GetAll().Where(up => up.UserId == userId)
+                                                  .Select(up => up.CharacteristicId)
+                                                  .ToHashSet();
+                foreach (var menuItemId in menuItemIdsWithRecommendationToday)
+                {
+                    items.Add(_mapper.Map<MenuItemResponseDTO>(_menuItemRepository.GetById(menuItemId)));
+                }
+                if (userPreferences.Count == 0)
+                {
+                    return items;
+                }
+                var menuItemsWithCharacteristics = items.Select(menuItem => new
+                {
+                    MenuItem = menuItem,
+                    Characteristics = _menuItemCharacteristicRpository.GetAll().Where(mic => mic.MenuItemId == menuItem.Id)
+                                                          .Select(mic => mic.CharacteristicId)
+                                                          .ToList()
+                }).ToList();
+                var sortedMenuItems = menuItemsWithCharacteristics.OrderByDescending(item => item.Characteristics
+                                                            .Count(c => userPreferences.Contains(c)))
+                                                            .ThenBy(item => item.Characteristics.Count > 0 ? 0 : 1)
+                                                            .ThenBy(item => item.MenuItem.Id)
+                                                            .Select(item => item.MenuItem)
+                                                            .ToList();
+                return sortedMenuItems;
             }
-            if (userPreferences.Count == 0)
+            catch (Exception ex)
             {
-                return items;
+                _logger.LogError($"Error in GetRolledOutMenu: {ex.Message}");
+                throw new Exception(ex.Message);
             }
-            var menuItemsWithCharacteristics = items.Select(menuItem => new
-            {
-                MenuItem = menuItem,
-                Characteristics = _menuItemCharacteristicRpository.GetAll().Where(mic => mic.MenuItemId == menuItem.Id)
-                                                      .Select(mic => mic.CharacteristicId)
-                                                      .ToList()
-            }).ToList();
-            var sortedMenuItems = menuItemsWithCharacteristics.OrderByDescending(item => item.Characteristics
-                                                        .Count(c => userPreferences.Contains(c)))
-                                                        .ThenBy(item => item.Characteristics.Count > 0 ? 0 : 1)
-                                                        .ThenBy(item => item.MenuItem.Id)
-                                                        .Select(item => item.MenuItem)
-                                                        .ToList();
-            return sortedMenuItems;
         }
+        #endregion
 
+        #region GetFinalisedMenu
         public List<MenuItemResponseDTO> GetFinalisedMenu()
         {
-            var menuItemIdsWithRecommendationToday = _recommendationRepository.GetAll()
-                .Where(r => r.RecommendationDate.Date.Date == DateTime.Today.Date && r.IsFinalised == true)
-                .Select(r => r.MenuItemId)
-                .ToList();
-            List<MenuItemResponseDTO> finalisedMenu = new List<MenuItemResponseDTO>();
-            foreach (var menuItemId in menuItemIdsWithRecommendationToday)
+            try
             {
-                finalisedMenu.Add(_mapper.Map <MenuItemResponseDTO >(_menuItemRepository.GetById(menuItemId)));
+                _logger.LogInformation("GetFinalisedMenu called");
+                var menuItemIdsWithRecommendationToday = _recommendationRepository.GetAll()
+                    .Where(r => r.RecommendationDate.Date.Date == DateTime.Today.Date && r.IsFinalised == true)
+                    .Select(r => r.MenuItemId)
+                    .ToList();
+                List<MenuItemResponseDTO> finalisedMenu = new List<MenuItemResponseDTO>();
+                foreach (var menuItemId in menuItemIdsWithRecommendationToday)
+                {
+                    finalisedMenu.Add(_mapper.Map<MenuItemResponseDTO>(_menuItemRepository.GetById(menuItemId)));
+                }
+                return finalisedMenu;
             }
-            return finalisedMenu;
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetFinalisedMenu: {ex.Message}");
+                throw new Exception(ex.Message);
+            }
         }
+        #endregion
 
+        #region GetAllFoodCharacteristic
         public List<ViewFoodCharacteristicsResponseDTO> GetAllFoodCharacteristic()
         {
-            var characteristics = _characteristicRepository.GetAll().Select(c => new ViewFoodCharacteristicsResponseDTO { Id = c.Id, Characteristic = c.Name }).ToList();
-            return characteristics;
+            try
+            {
+                _logger.LogInformation("GetAllFoodCharacteristic called");
+                var characteristics = _characteristicRepository.GetAll().Select(c => new ViewFoodCharacteristicsResponseDTO { Id = c.Id, Characteristic = c.Name }).ToList();
+                return characteristics;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetAllFoodCharacteristic: {ex.Message}");
+                throw new Exception(ex.Message);
+            }
         }
+        #endregion
     }
 }

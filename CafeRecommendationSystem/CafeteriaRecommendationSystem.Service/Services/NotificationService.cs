@@ -2,6 +2,7 @@
 using CafeteriaRecommendationSystem.DAL.Models;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
+using Microsoft.Extensions.Logging;
 
 namespace CafeteriaRecommendationSystem.Service.Services
 {
@@ -9,42 +10,64 @@ namespace CafeteriaRecommendationSystem.Service.Services
     {
         private readonly INotificationRepository _notificationRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<NotificationService> _logger;
 
-        public NotificationService(INotificationRepository notificationRepository, IUserRepository userRepository)
+        #region Constructor
+        public NotificationService(INotificationRepository notificationRepository, IUserRepository userRepository, ILogger<NotificationService> logger)
         {
             _notificationRepository = notificationRepository;
             _userRepository = userRepository;
+            _logger = logger;
         }
+        #endregion
+
+        #region SendNotification
         public void SendNotification(NotificationTypeEnum notificationType, string message)
         {
-            var users = _userRepository.GetAll().Where(u => u.RoleId == (int)RoleEnum.Employee).ToList();
-            foreach (var user in users)
+            try
             {
-                var notification = new Notification
+                _logger.LogInformation("SendNotification called");
+                var users = _userRepository.GetAll().Where(u => u.RoleId == (int)RoleEnum.Employee).ToList();
+                foreach (var user in users)
                 {
-                    UserId = user.Id,
-                    Message = message,
-                    Date = DateTime.Now,
-                    NotificationTypeId = (int)notificationType,
-                    IsDelivered = false
-                };
-                _notificationRepository.Add(notification);
+                    var notification = new Notification
+                    {
+                        UserId = user.Id,
+                        Message = message,
+                        Date = DateTime.Now,
+                        NotificationTypeId = (int)notificationType,
+                        IsDelivered = false
+                    };
+                    _notificationRepository.Add(notification);
+                }
             }
-        }
-
-        public List<Notification> GetNotifications(int userId)
-        {            
-            var notifications = _notificationRepository.GetAll().Where(n => n.UserId == userId && n.Date.Date == DateTime.Today && n.IsDelivered == false).ToList();
-            foreach (var notification in notifications)
+            catch (Exception ex)
             {
-                notification.IsDelivered = true;
-                _notificationRepository.Update(notification);
+                _logger.LogError($"Error in SendNotification: {ex.Message}");
             }
-            return notifications;
         }
-        public List<Notification> GetNotifications(User user)
+        #endregion
+
+        #region GetNotifications
+        public List<Notification> GetNotifications(int userId)
         {
-            return _notificationRepository.GetAll().Where(n => n.UserId == user.Id).ToList();
+            try
+            {
+                _logger.LogInformation("GetNotifications called");
+                var notifications = _notificationRepository.GetAll().Where(n => n.UserId == userId && n.Date.Date == DateTime.Today && n.IsDelivered == false).ToList();
+                foreach (var notification in notifications)
+                {
+                    notification.IsDelivered = true;
+                    _notificationRepository.Update(notification);
+                }
+                return notifications;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetNotifications: {ex.Message}");
+                throw new Exception(ex.Message);
+            }
         }
+        #endregion
     }
 }

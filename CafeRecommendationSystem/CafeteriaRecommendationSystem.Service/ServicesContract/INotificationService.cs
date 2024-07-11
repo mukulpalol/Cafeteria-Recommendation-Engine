@@ -5,8 +5,7 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
 {
     public interface INotificationService
     {
-        void SendNotification(NotificationTypeEnum notificationType, string message);        
-        List<Notification> GetNotifications(User user);
+        void SendNotification(NotificationTypeEnum notificationType, string message);
         List<Notification> GetNotifications(int userId);
     }
 }

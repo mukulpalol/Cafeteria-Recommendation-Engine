@@ -77,6 +77,7 @@ namespace CafeteriaRecommendationSystem
             
             services.AddAutoMapper(typeof(MenuProfile));
             services.AddAutoMapper(typeof(FeedbackProfile));
+            services.AddAutoMapper(typeof(CharacteristicProfile));
 
             services.AddLogging(loggingBuilder =>
             {

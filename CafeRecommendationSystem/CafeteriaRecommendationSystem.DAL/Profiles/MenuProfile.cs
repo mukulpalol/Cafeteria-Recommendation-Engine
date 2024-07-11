@@ -17,6 +17,11 @@ namespace CafeteriaRecommendationSystem.DAL.Profiles
                 .ForMember(dest => dest.SentimentScore, opt => opt.MapFrom(src => src.SentimentScore))
                 .ForMember(dest => dest.Availability, opt => opt.MapFrom(src => ((AvailabilityStatusEnum)src.AvailabilityStatusId).ToString()))
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => ((MenuItemTypeEnum)src.TypeId).ToString()));
+
+            CreateMap<MenuItem, DiscardedMenuItem>()
+                .ForMember(dest => dest.MenuItemId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.MenuItem, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src=> DateTime.Today));
         }
     }
 }

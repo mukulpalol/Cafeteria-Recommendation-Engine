@@ -6,8 +6,7 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
 {
     public interface IRecommendationService
     {
-        List<MenuItemResponseDTO> GetRecommendations(int numberOfRecommendations, MenuItemTypeEnum menuItemType);
-        void AddRecommendation(Recommendation recommendation);
+        List<MenuItemResponseDTO> GetRecommendations(int numberOfRecommendations, MenuItemTypeEnum menuItemType);        
         void RollOutMenu(List<int> menuItemIdList);
         string FinaliseMenu(List<int> menuItemIdList);
         void UpdateRecommendation(Recommendation recommendation);
