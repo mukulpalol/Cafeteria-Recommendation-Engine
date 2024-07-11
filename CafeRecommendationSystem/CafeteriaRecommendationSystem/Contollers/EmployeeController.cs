@@ -68,20 +68,7 @@ namespace CafeteriaRecommendationSystem.Contollers
                 int userId = int.Parse(parts[3]);
                 var menuItemService = GetService<IMenuItemService>();
                 var menuItems = menuItemService.GetRolledOutMenu(userId);
-                List<MenuItemResponseDTO> items = new List<MenuItemResponseDTO>();
-                foreach (var menuItem in menuItems)
-                {
-                    MenuItemResponseDTO menuItemResponse = new MenuItemResponseDTO();
-                    menuItemResponse.Id = menuItem.Id;
-                    menuItemResponse.Name = menuItem.Name;
-                    menuItemResponse.Price = menuItem.Price;
-                    menuItemResponse.Type = ((MenuItemTypeEnum)menuItem.TypeId).ToString();
-                    menuItemResponse.Availability = ((AvailabilityStatusEnum)menuItem.AvailabilityStatusId).ToString();
-                    menuItemResponse.GeneralSentiment = menuItem.GeneralSentiment;
-                    menuItemResponse.SentimentScore = menuItem.SentimentScore;
-                    items.Add(menuItemResponse);
-                }
-                return Helpers.SerializeObjectIgnoringCycles(items);
+                return Helpers.SerializeObjectIgnoringCycles(menuItems);
             }
             catch (Exception ex)
             {
@@ -95,20 +82,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             {
                 var menuItemService = GetService<IMenuItemService>();
                 var menuItems = menuItemService.GetAvailableMenuItems();
-                List<MenuItemResponseDTO> items = new List<MenuItemResponseDTO>();
-                foreach (var menuItem in menuItems)
-                {
-                    MenuItemResponseDTO menuItemResponse = new MenuItemResponseDTO();
-                    menuItemResponse.Id = menuItem.Id;
-                    menuItemResponse.Name = menuItem.Name;
-                    menuItemResponse.Price = menuItem.Price;
-                    menuItemResponse.Type = ((MenuItemTypeEnum)menuItem.TypeId).ToString();
-                    menuItemResponse.Availability = ((AvailabilityStatusEnum)menuItem.AvailabilityStatusId).ToString();
-                    menuItemResponse.GeneralSentiment = menuItem.GeneralSentiment;
-                    menuItemResponse.SentimentScore = menuItem.SentimentScore;
-                    items.Add(menuItemResponse);
-                }
-                return JsonConvert.SerializeObject(items);
+                return JsonConvert.SerializeObject(menuItems);
             }
             catch (Exception ex)
             {
@@ -122,20 +96,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             {
                 var menuItemService = GetService<IMenuItemService>();
                 var menuItems = menuItemService.GetFinalisedMenu();
-                List<MenuItemResponseDTO> items = new List<MenuItemResponseDTO>();
-                foreach (var menuItem in menuItems)
-                {
-                    MenuItemResponseDTO menuItemResponse = new MenuItemResponseDTO();
-                    menuItemResponse.Id = menuItem.Id;
-                    menuItemResponse.Name = menuItem.Name;
-                    menuItemResponse.Price = menuItem.Price;
-                    menuItemResponse.Type = ((MenuItemTypeEnum)menuItem.TypeId).ToString();
-                    menuItemResponse.Availability = ((AvailabilityStatusEnum)menuItem.AvailabilityStatusId).ToString();
-                    menuItemResponse.GeneralSentiment = menuItem.GeneralSentiment;
-                    menuItemResponse.SentimentScore = menuItem.SentimentScore;
-                    items.Add(menuItemResponse);
-                }
-                return JsonConvert.SerializeObject(items);
+                return JsonConvert.SerializeObject(menuItems);
             }
             catch (Exception ex)
             {
@@ -164,20 +125,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             {
                 var menuItemService = GetService<IMenuItemService>();
                 var menuItems = menuItemService.GetMenuItemsThatAreDiscarded();
-                List<MenuItemResponseDTO> items = new List<MenuItemResponseDTO>();
-                foreach (var menuItem in menuItems)
-                {
-                    MenuItemResponseDTO menuItemResponse = new MenuItemResponseDTO();
-                    menuItemResponse.Id = menuItem.Id;
-                    menuItemResponse.Name = menuItem.Name;
-                    menuItemResponse.Price = menuItem.Price;
-                    menuItemResponse.Type = ((MenuItemTypeEnum)menuItem.TypeId).ToString();
-                    menuItemResponse.Availability = ((AvailabilityStatusEnum)menuItem.AvailabilityStatusId).ToString();
-                    menuItemResponse.GeneralSentiment = menuItem.GeneralSentiment;
-                    menuItemResponse.SentimentScore = menuItem.SentimentScore;
-                    items.Add(menuItemResponse);
-                }
-                return JsonConvert.SerializeObject(items);
+                return JsonConvert.SerializeObject(menuItems);
             }
             catch (Exception ex)
             {
@@ -191,8 +139,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             {
                 var menuItemService = GetService<IMenuItemService>();
                 var characteristics = menuItemService.GetAllFoodCharacteristic();
-                var response = characteristics.Select(c => new ViewFoodCharacteristicsResponseDTO { Id = c.Id, Characteristic = c.Name }).ToList();
-                return JsonConvert.SerializeObject(response);
+                return JsonConvert.SerializeObject(characteristics);
             }
             catch (Exception ex)
             {
@@ -221,9 +168,8 @@ namespace CafeteriaRecommendationSystem.Contollers
             {
                 var userService = GetService<IUserService>();
                 int userId = int.Parse(parts[3]);
-                var preferences = userService.GetUserPreferences(userId);
-                var response = preferences.Select(c => new ViewFoodCharacteristicsResponseDTO { Id = c.Id, Characteristic = c.Name }).ToList();
-                return JsonConvert.SerializeObject(response);
+                var preferences = userService.GetUserPreferences(userId);                
+                return JsonConvert.SerializeObject(preferences);
             }
             catch (Exception ex)
             {
@@ -238,7 +184,7 @@ namespace CafeteriaRecommendationSystem.Contollers
                 var feedbackService = GetService<IFeedbackService>();
                 var requestJson = parts[3];
                 DiscardedMenuItemFeedbackRequestDTO request = JsonConvert.DeserializeObject<DiscardedMenuItemFeedbackRequestDTO>(requestJson);
-                return feedbackService.SubmiteFeedbackOfDiscardedMenuItm(request);
+                return feedbackService.SubmitFeedbackOfDiscardedMenuItm(request);
             }
             catch (Exception ex)
             {

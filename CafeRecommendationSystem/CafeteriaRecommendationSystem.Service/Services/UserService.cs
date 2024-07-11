@@ -1,4 +1,5 @@
-﻿using CafeteriaRecommendationSystem.DAL.Models;
+﻿using CafeteriaRecommendationSystem.Common.DTO.ResponseDTO;
+using CafeteriaRecommendationSystem.DAL.Models;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
 
@@ -42,15 +43,16 @@ namespace CafeteriaRecommendationSystem.Service.Services
             return _userRepository.GetById(userId);
         }
 
-        public List<Characteristic> GetUserPreferences(int userId)
+        public List<ViewFoodCharacteristicsResponseDTO> GetUserPreferences(int userId)
         {
             var user = _userRepository.GetById(userId);
-            var preferenceIds = _userPreferenceRepository.GetAll().Where(e=>e.UserId == userId).Select(c=>c.CharacteristicId).ToList();
-            List<Characteristic> preferences = new List<Characteristic>();
-            foreach(var preferenceId in preferenceIds)
+            var preferenceIds = _userPreferenceRepository.GetAll().Where(e => e.UserId == userId).Select(c => c.CharacteristicId).ToList();
+            List<ViewFoodCharacteristicsResponseDTO> preferences = new List<ViewFoodCharacteristicsResponseDTO>();
+            foreach (var preferenceId in preferenceIds)
             {
                 Characteristic preference = _characteristicRepository.GetById(preferenceId);
-                preferences.Add(preference);
+                ViewFoodCharacteristicsResponseDTO foodPreference = new ViewFoodCharacteristicsResponseDTO() { Id = preference.Id, Characteristic = preference.Name };
+                preferences.Add(foodPreference);
             }
             return preferences;
         }
@@ -85,7 +87,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 return "Invalid characteristic id";
             }
             var userPreference = _userPreferenceRepository.GetAll().Where(u => u.UserId == userId && u.CharacteristicId == characteristicId).FirstOrDefault();
-            if(userPreference != null)
+            if (userPreference != null)
             {
                 _userPreferenceRepository.Delete(userPreference.Id);
             }

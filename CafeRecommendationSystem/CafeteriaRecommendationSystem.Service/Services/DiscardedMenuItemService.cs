@@ -13,6 +13,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
         private readonly IMenuItemService _menuItemService;
         private readonly INotificationService _notificationService;
 
+        #region Constructor
         public DiscardedMenuItemService(IDiscardedMenuItemRepository discardedMenuItemRepository, IFeedbackRepository feedbackRepository, IMenuItemService menuItemService, INotificationService notificationService)
         {
             _discardedMenuItemRepository = discardedMenuItemRepository;
@@ -20,7 +21,9 @@ namespace CafeteriaRecommendationSystem.Service.Services
             _menuItemService = menuItemService;
             _notificationService = notificationService;
         }
+        #endregion
 
+        #region GenerateDiscardedMenuItem
         public string GenerateDiscardedMenuItem()
         {
             if (IsDiscardedItemGeneratedThisMonth())
@@ -66,7 +69,9 @@ namespace CafeteriaRecommendationSystem.Service.Services
             _notificationService.SendNotification(NotificationTypeEnum.MenuItemDiscarded, message);
             return "Discarded menu item generated successfully.";
         }
+        #endregion
 
+        #region IsDiscardedItemGeneratedThisMonth
         public bool IsDiscardedItemGeneratedThisMonth()
         {
             var discardedItem = _discardedMenuItemRepository.GetAll().OrderByDescending(item => item.CreatedDate).FirstOrDefault();
@@ -76,7 +81,9 @@ namespace CafeteriaRecommendationSystem.Service.Services
             }
             return false;
         }
+        #endregion
 
+        # region HandleDiscardMenuItem
         public string HandleDiscardMenuItem(HandleMenuItemRequestDTO requestDTO)
         {
             var menuItem = _menuItemService.GetMenuItemById(requestDTO.MenuItemId);
@@ -91,5 +98,6 @@ namespace CafeteriaRecommendationSystem.Service.Services
             }
             return "Invalid menu item id";
         }
+        #endregion
     }
 }

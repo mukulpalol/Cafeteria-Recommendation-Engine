@@ -1,4 +1,5 @@
-﻿using CafeteriaRecommendationSystem.Common;
+﻿using AutoMapper;
+using CafeteriaRecommendationSystem.Common;
 using CafeteriaRecommendationSystem.Common.DTO.RequestDTO;
 using CafeteriaRecommendationSystem.Common.DTO.ResponseDTO;
 using CafeteriaRecommendationSystem.DAL.Models;
@@ -8,7 +9,7 @@ using Newtonsoft.Json;
 namespace CafeteriaRecommendationSystem.Contollers
 {
     public class AdminController : BaseController
-    {
+    {        
         public AdminController(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
         public string HandleAddMenuItem(string[] parts)
@@ -63,21 +64,8 @@ namespace CafeteriaRecommendationSystem.Contollers
             try
             {
                 var menuItemService = GetService<IMenuItemService>();
-                var menuItems = menuItemService.GetAvailableMenuItems();
-                List<MenuItemResponseDTO> items = new List<MenuItemResponseDTO>();
-                foreach (var menuItem in menuItems)
-                {
-                    MenuItemResponseDTO menuItemResponse = new MenuItemResponseDTO();
-                    menuItemResponse.Id = menuItem.Id;
-                    menuItemResponse.Name = menuItem.Name;
-                    menuItemResponse.Price = menuItem.Price;
-                    menuItemResponse.Type = ((MenuItemTypeEnum)menuItem.TypeId).ToString();
-                    menuItemResponse.Availability = ((AvailabilityStatusEnum)menuItem.AvailabilityStatusId).ToString();
-                    menuItemResponse.GeneralSentiment = menuItem.GeneralSentiment;
-                    menuItemResponse.SentimentScore = menuItem.SentimentScore;
-                    items.Add(menuItemResponse);
-                }
-                return JsonConvert.SerializeObject(items);
+                var menuItems = menuItemService.GetAvailableMenuItems();                
+                return JsonConvert.SerializeObject(menuItems);
             }
             catch (Exception ex)
             {

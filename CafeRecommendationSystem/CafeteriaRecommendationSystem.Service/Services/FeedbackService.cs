@@ -1,4 +1,5 @@
-﻿using CafeteriaRecommendationSystem.Common;
+﻿using AutoMapper;
+using CafeteriaRecommendationSystem.Common;
 using CafeteriaRecommendationSystem.Common.DTO.RequestDTO;
 using CafeteriaRecommendationSystem.DAL.Models;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
@@ -12,23 +13,23 @@ namespace CafeteriaRecommendationSystem.Service.Services
         private readonly IMenuItemService _menuItemService;
         private readonly IDiscardedMenuItemFeedbackRepository _discardedMenuItemFeedbackRepository;
         private readonly IRecommendationService _recommendationService;
+        private readonly IMapper _mapper;
 
-        public FeedbackService(IFeedbackRepository feedbackRepository, IMenuItemService menuItemService, IDiscardedMenuItemFeedbackRepository discardedMenuItemFeedbackRepository, IRecommendationService recommendationService)
+        #region Constructor
+        public FeedbackService(IFeedbackRepository feedbackRepository, IMenuItemService menuItemService, IDiscardedMenuItemFeedbackRepository discardedMenuItemFeedbackRepository, IRecommendationService recommendationService, IMapper mapper)
         {
             _feedbackRepository = feedbackRepository;
             _menuItemService = menuItemService;
             _discardedMenuItemFeedbackRepository = discardedMenuItemFeedbackRepository;
             _recommendationService = recommendationService;
+            _mapper = mapper;
         }
+        #endregion
 
+        #region SubmitFeedback
         public string SubmitFeedback(FeedbackRequestDTO feedbackRequest)
         {
-            Feedback feedback = new Feedback();
-            feedback.MenuItemId = feedbackRequest.MenuItemId;
-            feedback.UserId = feedbackRequest.UserId;
-            feedback.Rating = feedbackRequest.Rating;
-            feedback.Comment = feedbackRequest.Comment;
-            feedback.Date = feedbackRequest.Date;
+            Feedback feedback = _mapper.Map<Feedback>(feedbackRequest);            
 
             if (!_recommendationService.CheckMenuItemWasFinalised(feedback.MenuItemId))
             {
@@ -42,18 +43,17 @@ namespace CafeteriaRecommendationSystem.Service.Services
             _menuItemService.UpdateSentimentScoreOfMenuItem(feedback.MenuItemId);
             return "Feedback submitted successfully";
         }
+        #endregion
 
-        public string SubmiteFeedbackOfDiscardedMenuItm(DiscardedMenuItemFeedbackRequestDTO discardedMenuItemFeedbackRequest)
+        #region SubmitFeedbackOfDiscardedMenuItm
+        public string SubmitFeedbackOfDiscardedMenuItm(DiscardedMenuItemFeedbackRequestDTO discardedMenuItemFeedbackRequest)
         {
             var menuItem = _menuItemService.GetMenuItemById(discardedMenuItemFeedbackRequest.MenuItemId);
             if (menuItem != null)
             {
                 if (menuItem.AvailabilityStatusId == (int)AvailabilityStatusEnum.Discarded)
                 {
-                    DiscardedMenuItemFeedback itemFeedback = new DiscardedMenuItemFeedback();
-                    itemFeedback.DiscardedMenuItemId = discardedMenuItemFeedbackRequest.MenuItemId;
-                    itemFeedback.UserId = discardedMenuItemFeedbackRequest.UserId;
-                    itemFeedback.Feedback = discardedMenuItemFeedbackRequest.Feedback;
+                    DiscardedMenuItemFeedback itemFeedback = _mapper.Map<DiscardedMenuItemFeedback>(discardedMenuItemFeedbackRequest);                    
                     itemFeedback.Date = DateTime.Today;
                     _discardedMenuItemFeedbackRepository.Add(itemFeedback);
 
@@ -69,16 +69,21 @@ namespace CafeteriaRecommendationSystem.Service.Services
             return _feedbackRepository.GetAll()
                 .Any(f => f.UserId == feedback.UserId && f.MenuItemId == feedback.MenuItemId && f.Date.Date == feedback.Date.Date);
         }
+        #endregion
 
+        #region GetFeedbackByMenuItem
         public List<Feedback> GetFeedbackByMenuItem(int menuItemId)
         {
             return _feedbackRepository.GetAll().Where(f => f.MenuItemId == menuItemId).ToList();
         }
+        #endregion
 
+        #region GetFeedbackByUser
         public List<Feedback> GetFeedbackByUser(int userId)
         {
             return _feedbackRepository.GetAll().Where(f => f.UserId == userId).ToList();
         }
+        #endregion
 
     }
 }

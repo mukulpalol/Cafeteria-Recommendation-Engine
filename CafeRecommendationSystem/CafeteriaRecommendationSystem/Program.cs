@@ -1,4 +1,5 @@
 ﻿using CafeteriaRecommendationSystem.DAL;
+using CafeteriaRecommendationSystem.DAL.Profiles;
 using CafeteriaRecommendationSystem.DAL.Repositories;
 using CafeteriaRecommendationSystem.DAL.RepositoriesContract;
 using CafeteriaRecommendationSystem.Service.Services;
@@ -73,6 +74,9 @@ namespace CafeteriaRecommendationSystem
             services.AddScoped<ISentimentAnalysisHelper, SentimentAnalysisHelper>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDiscardedMenuItemService, DiscardedMenuItemService>();
+            
+            services.AddAutoMapper(typeof(MenuProfile));
+            services.AddAutoMapper(typeof(FeedbackProfile));
 
             services.AddLogging(loggingBuilder =>
             {

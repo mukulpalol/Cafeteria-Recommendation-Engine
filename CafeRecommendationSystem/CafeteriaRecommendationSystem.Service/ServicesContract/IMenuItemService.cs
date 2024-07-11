@@ -1,4 +1,5 @@
 ﻿using CafeteriaRecommendationSystem.Common.DTO.RequestDTO;
+using CafeteriaRecommendationSystem.Common.DTO.ResponseDTO;
 using CafeteriaRecommendationSystem.DAL.Models;
 
 namespace CafeteriaRecommendationSystem.Service.ServicesContract
@@ -12,11 +13,10 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
         void DeleteMenuItem(int menuItemId);
         List<MenuItem> GetAllMenuItems();
         MenuItem GetMenuItemById(int menuItemId);
-        List<MenuItem> GetAvailableMenuItems();
-        List<MenuItem> GetMenuItemsThatAreDiscarded();
-        List<MenuItem> GetRolledOutMenu();
-        List<MenuItem> GetRolledOutMenu(int userId);
-        List<MenuItem> GetFinalisedMenu();
-        List<Characteristic> GetAllFoodCharacteristic();
+        List<MenuItemResponseDTO> GetAvailableMenuItems();        
+        List<MenuItemResponseDTO> GetMenuItemsThatAreDiscarded();        
+        List<MenuItemResponseDTO> GetRolledOutMenu(int userId);
+        List<MenuItemResponseDTO> GetFinalisedMenu();
+        List<ViewFoodCharacteristicsResponseDTO> GetAllFoodCharacteristic();
     }
 }
