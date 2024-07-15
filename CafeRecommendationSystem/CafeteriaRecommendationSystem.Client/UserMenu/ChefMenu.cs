@@ -32,14 +32,14 @@ namespace CafeteriaRecommendationSystem.Client.UserMenu
         {
             return option switch
             {
-                1 => new GetRecommendationCommand(_stream),
-                2 => new RollOutMenuCommand(_stream),
-                3 => new FinaliseMenuCommand(_stream),
-                4 => new ViewMenuCommand(_stream),
+                1 => new GetRecommendation(_stream),
+                2 => new RollOutMenu(_stream),
+                3 => new FinaliseMenu(_stream),
+                4 => new ViewMenu(_stream),
                 5 => new ViewVotesOnRolledOutMenu(_stream),
-                6 => new GenerateDiscardedMenuItemsCommand(_stream),
-                7 => new ViewDiscardedMenuItemsCommand(_stream),
-                8 => new HandleDiscardMenuItemsCommand(_stream),
+                6 => new GenerateDiscardedMenuItems(_stream),
+                7 => new ViewDiscardedMenuItems(_stream),
+                8 => new HandleDiscardMenuItems(_stream),
                 0 => null,
                 _ => throw new ArgumentException("Invalid option")
             };

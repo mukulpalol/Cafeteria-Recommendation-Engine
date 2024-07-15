@@ -1,6 +1,5 @@
 ﻿using CafeteriaRecommendationSystem.Common;
 using CafeteriaRecommendationSystem.Common.DTO.RequestDTO;
-using CafeteriaRecommendationSystem.Common.DTO.ResponseDTO;
 using CafeteriaRecommendationSystem.Service.ServicesContract;
 using Newtonsoft.Json;
 
@@ -24,15 +23,15 @@ namespace CafeteriaRecommendationSystem.Contollers
                 if (!selectionService.CheckSelectionExists(selectionResponse.UserId, selectionResponse.MenuItemId))
                 {
                     if (menuItem == null) return "Invalid menu item id";
-                    if (!IsMenuItemTypeValid(menuItem.TypeId, parts[4])) return $"Entered menu item is not for {((MenuItemTypeEnum)int.Parse(parts[4])).ToString().ToLower()}";
+                    if (!IsMenuItemTypeValid(menuItem.TypeId, selectionResponse.MealTypeId)) return $"Entered menu item is not for {((MenuItemTypeEnum)selectionResponse.MealTypeId).ToString().ToLower()}";
 
                     var recommendation = recommendationService.GetRecommendationByMenuItem(selectionResponse.MenuItemId);
                     if (recommendation == null) return "Entered menu item was not rolled out";
 
                     selectionService.AddSelection(selectionResponse.UserId, selectionResponse.MenuItemId);
-                    return $"{((MenuItemTypeEnum)int.Parse(parts[4])).ToString()} selection complete";
+                    return $"{((MenuItemTypeEnum)selectionResponse.MealTypeId).ToString()} selection complete";
                 }
-                return $"Selection for {((MenuItemTypeEnum)int.Parse(parts[4])).ToString()} already done";
+                return $"Selection for menu item id {selectionResponse.MenuItemId} already done";
             }
             catch (Exception ex)
             {
@@ -40,13 +39,12 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        private bool IsMenuItemTypeValid(int menuItemTypeId, string partType)
+        private bool IsMenuItemTypeValid(int menuItemTypeId, int partType)
         {
-            int parsedType = int.Parse(partType);
-            return menuItemTypeId == parsedType;
+            return menuItemTypeId == partType;
         }
 
-        public string HandleSubmitFeedback(string[] parts)
+        public string SubmitFeedback(string[] parts)
         {
             try
             {
@@ -61,7 +59,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleGetRolledOutMenu(string[] parts)
+        public string GetRolledOutMenu(string[] parts)
         {
             try
             {
@@ -76,7 +74,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleGetAvailableMenuItems()
+        public string GetAvailableMenuItems()
         {
             try
             {
@@ -90,7 +88,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleGetFinalizedMenu()
+        public string GetFinalizedMenu()
         {
             try
             {
@@ -104,7 +102,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleGetNotifications(string[] parts)
+        public string GetNotifications(string[] parts)
         {
             try
             {
@@ -119,7 +117,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleViewDiscardedMenuItem()
+        public string ViewDiscardedMenuItem()
         {
             try
             {
@@ -133,7 +131,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleGetAllFoodCharacteristics()
+        public string GetAllFoodCharacteristics()
         {
             try
             {
@@ -147,7 +145,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleUpdateFoodPreference(string[] parts)
+        public string UpdateFoodPreference(string[] parts)
         {
             try
             {
@@ -162,13 +160,13 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleGetUserPreferences(string[] parts)
+        public string GetUserPreferences(string[] parts)
         {
             try
             {
                 var userService = GetService<IUserService>();
                 int userId = int.Parse(parts[3]);
-                var preferences = userService.GetUserPreferences(userId);                
+                var preferences = userService.GetUserPreferences(userId);
                 return JsonConvert.SerializeObject(preferences);
             }
             catch (Exception ex)
@@ -177,7 +175,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleSubmitFeedbackOnDiscardedMenuItems(string[] parts)
+        public string SubmitFeedbackOnDiscardedMenuItems(string[] parts)
         {
             try
             {

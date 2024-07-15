@@ -12,7 +12,7 @@ namespace CafeteriaRecommendationSystem.Contollers
     {        
         public AdminController(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
-        public string HandleAddMenuItem(string[] parts)
+        public string AddMenuItem(string[] parts)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleUpdateMenuItem(string[] parts)
+        public string UpdateMenuItem(string[] parts)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleDeleteMenuItem(string[] parts)
+        public string DeleteMenuItem(string[] parts)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleGetAvailableMenuItems()
+        public string GetAvailableMenuItems()
         {
             try
             {

@@ -170,22 +170,6 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 throw new Exception(ex.Message);
             }
         }
-        #endregion
-
-        #region CheckMenuItemWasFinalised
-        public bool CheckMenuItemWasFinalised(int menuItemId)
-        {
-            try
-            {
-                _logger.LogInformation("CheckMenuItemWasFinalised called");
-                return _recommendationRepository.GetAll().Any(s => s.MenuItemId == menuItemId && s.RecommendationDate == DateTime.Today.AddDays(-1) && s.IsFinalised == true);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error in CheckMenuItemWasFinalised: {ex.Message}");
-                throw new Exception(ex.Message);
-            }
-        }
-        #endregion
+        #endregion        
     }
 }

@@ -14,17 +14,17 @@ namespace CafeteriaRecommendationSystem.Service.Services
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IMenuItemService _menuItemService;
         private readonly IDiscardedMenuItemFeedbackRepository _discardedMenuItemFeedbackRepository;
-        private readonly IRecommendationService _recommendationService;
+        private readonly IRecommendationRepository _recommendationRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<FeedbackService> _logger;
 
         #region Constructor
-        public FeedbackService(IFeedbackRepository feedbackRepository, IMenuItemService menuItemService, IDiscardedMenuItemFeedbackRepository discardedMenuItemFeedbackRepository, IRecommendationService recommendationService, IMapper mapper, ILogger<FeedbackService> logger)
+        public FeedbackService(IFeedbackRepository feedbackRepository, IMenuItemService menuItemService, IDiscardedMenuItemFeedbackRepository discardedMenuItemFeedbackRepository, IRecommendationRepository recommendationRepository, IMapper mapper, ILogger<FeedbackService> logger)
         {
             _feedbackRepository = feedbackRepository;
             _menuItemService = menuItemService;
             _discardedMenuItemFeedbackRepository = discardedMenuItemFeedbackRepository;
-            _recommendationService = recommendationService;
+            _recommendationRepository = recommendationRepository;
             _mapper = mapper;
             _logger = logger;
         }
@@ -38,7 +38,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 _logger.LogInformation("SubmitFeedback called");
                 Feedback feedback = _mapper.Map<Feedback>(feedbackRequest);
 
-                if (!_recommendationService.CheckMenuItemWasFinalised(feedback.MenuItemId))
+                if (!CheckMenuItemWasFinalised(feedback.MenuItemId))
                 {
                     return $"Menu item {feedback.MenuItemId} was not made today.";
                 }
@@ -55,6 +55,20 @@ namespace CafeteriaRecommendationSystem.Service.Services
             {
                 _logger.LogError($"Error in SubmitFeedback: {ex.Message}");
                 return "Error in submitting feedback";
+            }
+        }
+
+        private bool CheckMenuItemWasFinalised(int menuItemId)
+        {
+            try
+            {
+                _logger.LogInformation("CheckMenuItemWasFinalised called");
+                return _recommendationRepository.GetAll().Any(s => s.MenuItemId == menuItemId && s.RecommendationDate == DateTime.Today.AddDays(-1) && s.IsFinalised == true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in CheckMenuItemWasFinalised: {ex.Message}");
+                throw new Exception(ex.Message);
             }
         }
         #endregion

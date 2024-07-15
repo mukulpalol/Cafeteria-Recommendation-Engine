@@ -10,7 +10,6 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
         void RollOutMenu(List<int> menuItemIdList);
         string FinaliseMenu(List<int> menuItemIdList);
         void UpdateRecommendation(Recommendation recommendation);
-        Recommendation GetRecommendationByMenuItem(int menuItemId);
-        bool CheckMenuItemWasFinalised(int menuItemId);
+        Recommendation GetRecommendationByMenuItem(int menuItemId);        
     }
 }

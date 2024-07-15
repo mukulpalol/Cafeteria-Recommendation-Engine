@@ -60,7 +60,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                     notification.IsDelivered = true;
                     _notificationRepository.Update(notification);
                 }
-                return notifications;
+                return notifications.DistinctBy(n=>n.Message).ToList();
             }
             catch (Exception ex)
             {

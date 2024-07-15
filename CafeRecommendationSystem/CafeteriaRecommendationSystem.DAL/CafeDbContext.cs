@@ -62,7 +62,7 @@ namespace CafeteriaRecommendationSystem.DAL
 
             modelBuilder.Entity<DiscardedMenuItemFeedback>(entity =>
             {
-                entity.ToTable("DiscardedMenyItemFeedback");
+                entity.ToTable("DiscardedMenuItemFeedback");
                 entity.Property(e => e.Id).HasColumnName("ID");
                 entity.Property(e => e.Date).HasColumnType("date");
                 entity.Property(e => e.Feedback)
@@ -75,9 +75,9 @@ namespace CafeteriaRecommendationSystem.DAL
                     .HasConstraintName("FK_DiscardedMenuItemFeedback_Users");
 
                 entity.HasOne(d => d.DiscardedMenuItem).WithMany(p => p.DiscardedMenuItemFeedbacks)
-                    .HasForeignKey(d => d.UserId)
+                    .HasForeignKey(d => d.DiscardedMenuItemId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_DiscardedMenuItemFeedback_DiscardedMenuItems");
+                    .HasConstraintName("FK_DiscardedMenuItemFeedback_DiscardedMenuItem");
             });
 
             modelBuilder.Entity<Feedback>(entity =>

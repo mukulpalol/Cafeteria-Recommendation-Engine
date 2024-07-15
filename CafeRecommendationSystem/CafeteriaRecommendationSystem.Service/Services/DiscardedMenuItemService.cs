@@ -37,7 +37,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 _logger.LogInformation("GenerateDiscardedMenuItem called");
                 if (IsDiscardedItemGeneratedThisMonth())
                 {
-                    return "Discarded menut item already generated this month.";
+                    return "Discarded menu item already generated this month.";
                 }
                 var menuItemIds = _menuItemService.GetAllMenuItems().Where(s => s.SentimentScore <= 3).Select(mi => mi.Id).ToList();
 

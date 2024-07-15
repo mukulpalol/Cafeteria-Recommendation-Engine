@@ -6,12 +6,11 @@ using System.Text;
 
 namespace CafeteriaRecommendationSystem.Client.OptionCommand
 {
-    public class SubmitFeedbackCommand : ICommand
+    public class UpdateYourFoodPreferences : ICommand
     {
-        private readonly NetworkStream _stream;
         private readonly int _userId;
-
-        public SubmitFeedbackCommand(int userId, NetworkStream stream)
+        private readonly NetworkStream _stream;
+        public UpdateYourFoodPreferences(int userId, NetworkStream stream)
         {
             _stream = stream;
             _userId = userId;
@@ -19,18 +18,19 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
 
         public void Execute(RoleEnum role)
         {
-            FeedbackRequestDTO feedback = new FeedbackRequestDTO();
-            Console.Write("Enter menu item id: ");
-            feedback.MenuItemId = int.Parse(Console.ReadLine());
-            Console.Write("Enter rating: ");
-            feedback.Rating = int.Parse(Console.ReadLine());
-            Console.Write("Enter comment: ");
-            feedback.Comment = Console.ReadLine();
-            feedback.UserId = _userId;
-            feedback.Date = DateTime.Today;
+            UpdateFoodPreferenceRequestDTO request = new UpdateFoodPreferenceRequestDTO();
+            Console.WriteLine("1. Add preference");
+            Console.WriteLine("2. Delete preference");
+            Console.Write("Enter your choice: ");
+            request.Choice = int.Parse(Console.ReadLine());
 
-            string feedbackJson = JsonConvert.SerializeObject(feedback);
-            string optionRequest = $"option|{(int)role}|5|{feedbackJson}";
+            Console.Write("Enter characteristic id: ");
+            request.CharacteristicId = int.Parse(Console.ReadLine());
+
+            request.UserId = _userId;
+            string requestJson = JsonConvert.SerializeObject(request);
+
+            string optionRequest = $"option|{(int)role}|11|{requestJson}";
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
 
@@ -38,7 +38,6 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
             int bytes = _stream.Read(response, 0, response.Length);
             string serverResponse = Encoding.ASCII.GetString(response, 0, bytes);
             Console.WriteLine($"\nServer response: {serverResponse}\n");
-
         }
     }
 }

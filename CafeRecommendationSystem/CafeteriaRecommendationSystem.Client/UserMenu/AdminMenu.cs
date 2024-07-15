@@ -27,10 +27,10 @@ namespace CafeteriaRecommendationSystem.Client.UserMenu
         {
             return option switch
             {
-                1 => new AddMenuItemCommand(_stream),
-                2 => new UpdateMenuItemCommand(_stream),
-                3 => new DeleteMenuItemCommand(_stream),
-                4 => new ViewMenuCommand(_stream),
+                1 => new AddMenuItem(_stream),
+                2 => new UpdateMenuItem(_stream),
+                3 => new DeleteMenuItem(_stream),
+                4 => new ViewMenu(_stream),
                 0 => null,
                 _ => throw new ArgumentException("Invalid option")
             };

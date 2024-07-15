@@ -4,6 +4,7 @@ using CafeteriaRecommendationSystem.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CafeteriaRecommendationSystem.DAL.Migrations
 {
     [DbContext(typeof(CafeDbContext))]
-    partial class CafeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240715164044_updatedDiscardedMenuItemFeedback")]
+    partial class updatedDiscardedMenuItemFeedback
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,7 +199,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("DiscardedMenuItemFeedback", (string)null);
+                    b.ToTable("DiscardedMenyItemFeedback", (string)null);
                 });
 
             modelBuilder.Entity("CafeteriaRecommendationSystem.DAL.Models.Feedback", b =>
@@ -243,7 +246,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 1,
                             Comment = "Delicious dosa!",
-                            Date = new DateTime(2024, 6, 30, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2093),
+                            Date = new DateTime(2024, 6, 30, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7266),
                             MenuItemId = 1,
                             Rating = 4,
                             SentimentScore = 5,
@@ -253,7 +256,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 2,
                             Comment = "Best biryani ever!",
-                            Date = new DateTime(2024, 7, 2, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2129),
+                            Date = new DateTime(2024, 7, 2, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7288),
                             MenuItemId = 8,
                             Rating = 5,
                             SentimentScore = 5,
@@ -263,7 +266,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 3,
                             Comment = "Poha was okay.",
-                            Date = new DateTime(2024, 7, 3, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2140),
+                            Date = new DateTime(2024, 7, 3, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7293),
                             MenuItemId = 3,
                             Rating = 3,
                             SentimentScore = 5,
@@ -273,7 +276,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 4,
                             Comment = "Paneer masala was tasty.",
-                            Date = new DateTime(2024, 7, 4, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2142),
+                            Date = new DateTime(2024, 7, 4, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7294),
                             MenuItemId = 4,
                             Rating = 4,
                             SentimentScore = 5,
@@ -283,7 +286,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 5,
                             Comment = "Amazing butter chicken!",
-                            Date = new DateTime(2024, 7, 15, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2143),
+                            Date = new DateTime(2024, 7, 15, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7311),
                             MenuItemId = 11,
                             Rating = 5,
                             SentimentScore = 5,
@@ -293,7 +296,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 6,
                             Comment = "Idli was soft and tasty.",
-                            Date = new DateTime(2024, 7, 1, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2145),
+                            Date = new DateTime(2024, 7, 1, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7324),
                             MenuItemId = 2,
                             Rating = 4,
                             SentimentScore = 5,
@@ -303,7 +306,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 7,
                             Comment = "Chole bhature was too spicy.",
-                            Date = new DateTime(2024, 7, 3, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2146),
+                            Date = new DateTime(2024, 7, 3, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7326),
                             MenuItemId = 7,
                             Rating = 3,
                             SentimentScore = 5,
@@ -313,7 +316,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 8,
                             Comment = "Dal tadka was too salty.",
-                            Date = new DateTime(2024, 7, 4, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2148),
+                            Date = new DateTime(2024, 7, 4, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7328),
                             MenuItemId = 10,
                             Rating = 2,
                             SentimentScore = 5,
@@ -323,7 +326,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 9,
                             Comment = "Rajma chawal was good.",
-                            Date = new DateTime(2024, 7, 2, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2155),
+                            Date = new DateTime(2024, 7, 2, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7340),
                             MenuItemId = 5,
                             Rating = 4,
                             SentimentScore = 5,
@@ -333,7 +336,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 10,
                             Comment = "Loved the veg thali!",
-                            Date = new DateTime(2024, 7, 3, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2157),
+                            Date = new DateTime(2024, 7, 3, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7341),
                             MenuItemId = 6,
                             Rating = 5,
                             SentimentScore = 5,
@@ -343,7 +346,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 11,
                             Comment = "Dosa was cold.",
-                            Date = new DateTime(2024, 7, 1, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2158),
+                            Date = new DateTime(2024, 7, 1, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7343),
                             MenuItemId = 1,
                             Rating = 3,
                             SentimentScore = 5,
@@ -353,7 +356,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 12,
                             Comment = "Biryani had good flavors.",
-                            Date = new DateTime(2024, 7, 2, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2160),
+                            Date = new DateTime(2024, 7, 2, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7344),
                             MenuItemId = 8,
                             Rating = 4,
                             SentimentScore = 5,
@@ -363,7 +366,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 13,
                             Comment = "Poha was excellent!",
-                            Date = new DateTime(2024, 7, 4, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2161),
+                            Date = new DateTime(2024, 7, 4, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7346),
                             MenuItemId = 3,
                             Rating = 5,
                             SentimentScore = 5,
@@ -373,7 +376,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 14,
                             Comment = "Paneer masala was too oily.",
-                            Date = new DateTime(2024, 7, 3, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2164),
+                            Date = new DateTime(2024, 7, 3, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7347),
                             MenuItemId = 4,
                             Rating = 2,
                             SentimentScore = 5,
@@ -383,7 +386,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 15,
                             Comment = "Butter chicken was average.",
-                            Date = new DateTime(2024, 7, 15, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2165),
+                            Date = new DateTime(2024, 7, 15, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7350),
                             MenuItemId = 11,
                             Rating = 3,
                             SentimentScore = 5,
@@ -393,7 +396,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 16,
                             Comment = "Idli sambar was perfect.",
-                            Date = new DateTime(2024, 6, 30, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2166),
+                            Date = new DateTime(2024, 6, 30, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7351),
                             MenuItemId = 2,
                             Rating = 4,
                             SentimentScore = 5,
@@ -403,7 +406,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 17,
                             Comment = "Chole bhature were amazing!",
-                            Date = new DateTime(2024, 7, 2, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2168),
+                            Date = new DateTime(2024, 7, 2, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7353),
                             MenuItemId = 7,
                             Rating = 5,
                             SentimentScore = 5,
@@ -413,7 +416,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 18,
                             Comment = "Dal tadka was flavorful.",
-                            Date = new DateTime(2024, 7, 4, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2169),
+                            Date = new DateTime(2024, 7, 4, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7354),
                             MenuItemId = 10,
                             Rating = 3,
                             SentimentScore = 5,
@@ -423,7 +426,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 19,
                             Comment = "Rajma chawal was delicious.",
-                            Date = new DateTime(2024, 7, 3, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2171),
+                            Date = new DateTime(2024, 7, 3, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7355),
                             MenuItemId = 5,
                             Rating = 4,
                             SentimentScore = 5,
@@ -433,7 +436,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 20,
                             Comment = "Veg thali was satisfying.",
-                            Date = new DateTime(2024, 7, 4, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2172),
+                            Date = new DateTime(2024, 7, 4, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7357),
                             MenuItemId = 6,
                             Rating = 5,
                             SentimentScore = 5,
@@ -443,7 +446,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 21,
                             Comment = "Dosa was okay.",
-                            Date = new DateTime(2024, 7, 1, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2174),
+                            Date = new DateTime(2024, 7, 1, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7358),
                             MenuItemId = 1,
                             Rating = 3,
                             SentimentScore = 5,
@@ -453,7 +456,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 22,
                             Comment = "Biryani was spicy and tasty.",
-                            Date = new DateTime(2024, 7, 3, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2175),
+                            Date = new DateTime(2024, 7, 3, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7360),
                             MenuItemId = 8,
                             Rating = 4,
                             SentimentScore = 5,
@@ -463,7 +466,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 23,
                             Comment = "Poha was excellent as always.",
-                            Date = new DateTime(2024, 7, 4, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2177),
+                            Date = new DateTime(2024, 7, 4, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7361),
                             MenuItemId = 3,
                             Rating = 5,
                             SentimentScore = 5,
@@ -473,7 +476,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 24,
                             Comment = "Paneer masala was too salty.",
-                            Date = new DateTime(2024, 7, 2, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2178),
+                            Date = new DateTime(2024, 7, 2, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7363),
                             MenuItemId = 4,
                             Rating = 2,
                             SentimentScore = 5,
@@ -483,7 +486,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         {
                             Id = 25,
                             Comment = "Butter chicken was good.",
-                            Date = new DateTime(2024, 7, 3, 22, 29, 27, 570, DateTimeKind.Local).AddTicks(2180),
+                            Date = new DateTime(2024, 7, 3, 22, 10, 43, 919, DateTimeKind.Local).AddTicks(7364),
                             MenuItemId = 11,
                             Rating = 3,
                             SentimentScore = 5,
@@ -1056,7 +1059,7 @@ namespace CafeteriaRecommendationSystem.DAL.Migrations
                         .WithMany("DiscardedMenuItemFeedbacks")
                         .HasForeignKey("DiscardedMenuItemId")
                         .IsRequired()
-                        .HasConstraintName("FK_DiscardedMenuItemFeedback_DiscardedMenuItem");
+                        .HasConstraintName("FK_DiscardedMenuItemFeedback_DiscardedMenuItems");
 
                     b.HasOne("CafeteriaRecommendationSystem.DAL.Models.User", "User")
                         .WithMany("DiscardedMenuItemFeedbacks")

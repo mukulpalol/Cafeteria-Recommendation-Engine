@@ -6,11 +6,11 @@ using System.Text;
 
 namespace CafeteriaRecommendationSystem.Client.OptionCommand
 {
-    public class ViewVotesOnRolledOutMenu : ICommand
+    public class ViewFoodCharacteristics : ICommand
     {
-        private NetworkStream _stream;
+        private readonly NetworkStream _stream;
 
-        public ViewVotesOnRolledOutMenu(NetworkStream stream)
+        public ViewFoodCharacteristics(NetworkStream stream)
         {
             _stream = stream;
         }
@@ -19,16 +19,12 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
         {
             try
             {
-                SendViewVotesRequest(role);
+                SendViewCharacteristicsRequest(role);
                 ReceiveAndDisplayServerResponse();
             }
             catch (SocketException ex)
             {
                 Console.WriteLine($"Network error: {ex.Message}");
-            }
-            catch (JsonSerializationException ex)
-            {
-                Console.WriteLine($"Error in response format: {ex.Message}");
             }
             catch (Exception ex)
             {
@@ -36,9 +32,9 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
             }
         }
 
-        private void SendViewVotesRequest(RoleEnum role)
+        private void SendViewCharacteristicsRequest(RoleEnum role)
         {
-            string optionRequest = $"option|{(int)role}|5";
+            string optionRequest = $"option|{(int)role}|3";
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
         }
@@ -49,16 +45,19 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
             int bytes = _stream.Read(response, 0, response.Length);
             string serverResponse = Encoding.ASCII.GetString(response, 0, bytes);
 
-            var menuVoteResponse = JsonConvert.DeserializeObject<List<RolledOutMenuVotesDTO>>(serverResponse);
-            if (menuVoteResponse == null)
-            {
-                throw new JsonSerializationException("Deserialization returned null.");
-            }
+            var characteristics = JsonConvert.DeserializeObject<List<ViewFoodCharacteristicsResponseDTO>>(serverResponse);
 
-            Console.WriteLine("Menu Item Id\tName\tNumber Of Votes\n");
-            foreach (var voteResponse in menuVoteResponse)
+            if (characteristics == null || characteristics.Count == 0)
             {
-                Console.WriteLine($"{voteResponse.MenuItemId}\t{voteResponse.MenuItemName}\t{voteResponse.NumberOfVotes}\n");
+                Console.WriteLine("No food characteristics available.");
+            }
+            else
+            {
+                Console.WriteLine("Id\tCharacteristic");
+                foreach (var characteristic in characteristics)
+                {
+                    Console.WriteLine($"{characteristic.Id}\t{characteristic.Characteristic}");
+                }
             }
         }
     }

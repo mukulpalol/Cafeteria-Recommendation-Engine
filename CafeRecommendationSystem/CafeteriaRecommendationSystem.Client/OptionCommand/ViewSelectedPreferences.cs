@@ -10,6 +10,7 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
     {
         private readonly int _userId;
         private readonly NetworkStream _stream;
+
         public ViewSelectedPreferences(int userId, NetworkStream stream)
         {
             _userId = userId;
@@ -18,16 +19,37 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
 
         public void Execute(RoleEnum role)
         {
+            try
+            {
+                SendViewPreferencesRequest(role);
+                ReceiveAndDisplayServerResponse();
+            }
+            catch (SocketException ex)
+            {
+                Console.WriteLine($"Network error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+        private void SendViewPreferencesRequest(RoleEnum role)
+        {
             string optionRequest = $"option|{(int)role}|6|{_userId}";
             byte[] data = Encoding.ASCII.GetBytes(optionRequest);
             _stream.Write(data, 0, data.Length);
+        }
 
+        private void ReceiveAndDisplayServerResponse()
+        {
             byte[] response = new byte[8096];
             int bytes = _stream.Read(response, 0, response.Length);
             string serverResponse = Encoding.ASCII.GetString(response, 0, bytes);
+
             if (serverResponse == "[]")
             {
-                Console.WriteLine("You have not added any preferences");
+                Console.WriteLine("You have not added any preferences.");
             }
             else
             {
@@ -40,4 +62,5 @@ namespace CafeteriaRecommendationSystem.Client.OptionCommand
             }
         }
     }
+
 }

@@ -10,7 +10,7 @@ namespace CafeteriaRecommendationSystem.Contollers
     {
         public ChefController(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
-        public string HandleGetRecommendations(string[] parts)
+        public string GetRecommendations(string[] parts)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleRollOutMenu(string[] parts)
+        public string RollOutMenu(string[] parts)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleFinalizeMenu(string[] parts)
+        public string FinalizeMenu(string[] parts)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleGetAvailableMenuItems()
+        public string GetAvailableMenuItems()
         {
             try
             {
@@ -71,7 +71,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleGetRolledOutMenuVotes()
+        public string GetRolledOutMenuVotes()
         {
             try
             {
@@ -85,7 +85,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleGenerateDiscardedMenuItem()
+        public string GenerateDiscardedMenuItem()
         {
             try
             {
@@ -98,7 +98,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleViewDiscardedMenuItem()
+        public string ViewDiscardedMenuItem()
         {
             try
             {
@@ -112,7 +112,7 @@ namespace CafeteriaRecommendationSystem.Contollers
             }
         }
 
-        public string HandleChefHandleDiscardedMenuItems(string[] parts)
+        public string HandleDiscardedMenuItems(string[] parts)
         {
             try
             {

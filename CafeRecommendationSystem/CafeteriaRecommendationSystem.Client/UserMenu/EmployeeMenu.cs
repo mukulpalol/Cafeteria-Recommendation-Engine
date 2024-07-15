@@ -33,17 +33,17 @@ namespace CafeteriaRecommendationSystem.Client.UserMenu
         {
             return option switch
             {
-                1 => new SelectFoodItemForNextDayMenuCommand(_userId, _stream),
-                2 => new ViewNotificationCommand(_userId, _stream),
-                3 => new ViewFoodCharacteristicsCommand(_stream),
-                4 => new ViewMenuCommand(_stream),
-                5 => new SubmitFeedbackCommand(_userId, _stream),
+                1 => new SelectFoodItemForNextDayMenu(_userId, _stream),
+                2 => new ViewNotification(_userId, _stream),
+                3 => new ViewFoodCharacteristics(_stream),
+                4 => new ViewMenu(_stream),
+                5 => new SubmitFeedback(_userId, _stream),
                 6 => new ViewSelectedPreferences(_userId, _stream),
-                7 => new ViewDiscardedMenuItemsCommand(_stream),
-                8 => new ViewRolledOutMenuCommand(_userId, _stream),
-                9 => new ViewFinalizedMenuCommand(_stream),
-                10 => new GiveFeedbackOnDiscardedMenuItemCommand(_userId, _stream),
-                11 => new UpdateYourFoodPreferencesCommand(_userId, _stream),
+                7 => new ViewDiscardedMenuItems(_stream),
+                8 => new ViewRolledOutMenu(_userId, _stream),
+                9 => new ViewFinalizedMenu(_stream),
+                10 => new GiveFeedbackOnDiscardedMenuItem(_userId, _stream),
+                11 => new UpdateYourFoodPreferences(_userId, _stream),
                 0 => null,
                 _ => throw new ArgumentException("Invalid option")
             };
