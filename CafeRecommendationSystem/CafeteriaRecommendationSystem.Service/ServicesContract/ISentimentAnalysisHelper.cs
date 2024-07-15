@@ -3,5 +3,6 @@
     public interface ISentimentAnalysisHelper
     {
         decimal CalculateCommentSentimentScore(List<string> comments);
+        string GetCommentSummary(List<string> comments);
     }
 }

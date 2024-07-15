@@ -125,6 +125,25 @@ namespace CafeteriaRecommendationSystem.Service.Services
         }
         #endregion
 
+        #region UpdateSentimentSummaryOfMenuItem
+        public void UpdateSentimentSummaryOfMenuItem(int menuItemId)
+        {
+            try
+            {
+                _logger.LogInformation("UpdateSentimentSummaryOfMenuItem called");
+                var comments = _feedbackRepository.GetAll().Where(f => f.MenuItemId == menuItemId).Select(c => c.Comment).ToList();
+                var sentiment = _sentimentAnalysisHelper.GetCommentSummary(comments);
+                var menuItem = _menuItemRepository.GetById(menuItemId);
+                menuItem.GeneralSentiment = sentiment;
+                _menuItemRepository.Update(menuItem);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in UpdateSentimentSummaryOfMenuItem: {ex.Message}");
+            }
+        }
+        #endregion
+
         #region DeleteMenuItem
         public void DeleteMenuItem(int menuItemId)
         {

@@ -48,6 +48,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 }
                 _feedbackRepository.Add(feedback);
                 _menuItemService.UpdateSentimentScoreOfMenuItem(feedback.MenuItemId);
+                _menuItemService.UpdateSentimentSummaryOfMenuItem(feedback.MenuItemId);
                 return "Feedback submitted successfully";
             }
             catch (Exception ex)

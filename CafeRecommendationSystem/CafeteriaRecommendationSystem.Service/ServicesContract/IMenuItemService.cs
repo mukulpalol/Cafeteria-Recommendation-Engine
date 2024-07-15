@@ -10,6 +10,7 @@ namespace CafeteriaRecommendationSystem.Service.ServicesContract
         void UpdateMenuItem(MenuItemUpdateRequestDTO menuItem);
         void UpdateMenuItemAvailability(MenuItem menuItem, int AvailabilityStatusId);
         void UpdateSentimentScoreOfMenuItem(int menuItemId);
+        void UpdateSentimentSummaryOfMenuItem(int menuItemId);
         void DeleteMenuItem(int menuItemId);
         List<MenuItem> GetAllMenuItems();
         MenuItem GetMenuItemById(int menuItemId);

@@ -4,6 +4,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
 {
     public class SentimentAnalysisHelper : ISentimentAnalysisHelper
     {
+        #region CalculateCommentSentimentScore
         public decimal CalculateCommentSentimentScore(List<string> comments)
         {
             if (comments.Count == 0) return 0;
@@ -17,9 +18,74 @@ namespace CafeteriaRecommendationSystem.Service.Services
             }
 
             decimal averageSentimentScore = totalSentimentScore / comments.Count;
-            
+
             decimal normalizedScore = (averageSentimentScore + 10) / 2;
             return Math.Clamp(normalizedScore, 0, 10);
+        }
+        #endregion
+
+        #region GetCommentSummary
+        public string GetCommentSummary(List<string> comments)
+        {
+            var wordScores = GetWordScores();
+
+            var wordCounts = CountWords(comments, wordScores);
+
+            var mostFrequentPositiveWord = wordCounts
+                .Where(x => wordScores[x.Key] > 0)
+                .OrderByDescending(x => x.Value)
+                .FirstOrDefault().Key;
+
+            var mostFrequentNegativeWord = wordCounts
+                .Where(x => wordScores[x.Key] < 0)
+                .OrderByDescending(x => x.Value)
+                .FirstOrDefault().Key;
+
+            if (string.IsNullOrEmpty(mostFrequentPositiveWord) && string.IsNullOrEmpty(mostFrequentNegativeWord))
+            {
+                return string.Empty;
+            }
+            else if (string.IsNullOrEmpty(mostFrequentPositiveWord))
+            {
+                return $"{mostFrequentNegativeWord}";
+            }
+            else if (string.IsNullOrEmpty(mostFrequentNegativeWord))
+            {
+                return $"{mostFrequentPositiveWord};";
+            }
+            else
+            {
+                return $"{mostFrequentPositiveWord};{mostFrequentNegativeWord}";
+            }
+        }
+        #endregion
+
+        #region Utilities
+        private Dictionary<string, int> CountWords(List<string> comments, Dictionary<string, decimal> wordScores)
+        {
+            var wordCounts = new Dictionary<string, int>();
+
+            foreach (var comment in comments)
+            {
+                var words = comment.ToLower().Split(new[] { ' ', '.', ',', '!' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var word in words)
+                {
+                    if (wordScores.ContainsKey(word))
+                    {
+                        if (wordCounts.ContainsKey(word))
+                        {
+                            wordCounts[word]++;
+                        }
+                        else
+                        {
+                            wordCounts[word] = 1;
+                        }
+                    }
+                }
+            }
+
+            return wordCounts;
         }
 
         private decimal AnalyzeCommentSentiment(string comment)
@@ -27,7 +93,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
             var wordScores = GetWordScores();
 
             comment = comment.ToLower();
-            var words = comment.Split(new[] { ' ', '.', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var words = comment.Split(new[] { ' ', '.', ',', '!' }, StringSplitOptions.RemoveEmptyEntries);
 
             decimal sentimentScore = 0M;
             bool negate = false;
@@ -53,7 +119,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
         private Dictionary<string, decimal> GetWordScores()
         {
             return new Dictionary<string, decimal>
-            {       
+            {
                 { "delicious", 2 },
                 { "tasty", 2 },
                 { "yummy", 2 },
@@ -82,7 +148,7 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 { "very good", 1.5M },
                 { "enjoyable", 1.5M },
                 { "yum", 1.5M },
-        
+
                 { "bland", -1 },
                 { "tasteless", -2 },
                 { "flavorless", -2 },
@@ -111,5 +177,6 @@ namespace CafeteriaRecommendationSystem.Service.Services
                 { "mediocre", -1 }
             };
         }
+        #endregion
     }
 }
